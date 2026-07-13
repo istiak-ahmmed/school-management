@@ -61,16 +61,18 @@ new #[Layout('layouts.guest')] class extends Component
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex justify-center mt-6">
+            <button type="submit" style="width: 25%; min-width: 120px;" class="theme-bg hover:bg-emerald-900 text-white font-bold py-2.5 rounded-xl shadow-md shadow-emerald-200 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 flex justify-center">
+                লগইন
+            </button>
+        </div>
+
+        <div class="text-center mt-4 mb-2">
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}" wire:navigate>
                     {{ __('পাসওয়ার্ড ভুলে গেছেন?') }}
                 </a>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('লগইন') }}
-            </x-primary-button>
         </div>
     </form>
 </div>

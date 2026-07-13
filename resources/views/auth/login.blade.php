@@ -24,7 +24,6 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-emerald-700 shadow-sm focus:ring-emerald-600" name="remember">
@@ -32,16 +31,18 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-between mt-6">
+        <div class="flex justify-center mt-6">
+            <button type="submit" style="width: 25%; min-width: 120px;" class="theme-bg hover:bg-emerald-900 text-white font-bold py-2.5 rounded-xl shadow-md shadow-emerald-200 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2">
+                লগইন
+            </button>
+        </div>
+
+        <div class="text-center mt-4">
             @if (Route::has('password.request'))
                 <a class="text-sm theme-text hover:text-emerald-900 font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 transition" href="{{ route('password.request') }}">
                     পাসওয়ার্ড ভুলে গেছেন?
                 </a>
             @endif
-
-            <button type="submit" class="ms-3 theme-bg hover:bg-emerald-900 text-white font-bold py-2.5 px-6 rounded-xl shadow-md shadow-emerald-200 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2">
-                লগইন করুন
-            </button>
         </div>
     </form>
 </x-guest-layout>
