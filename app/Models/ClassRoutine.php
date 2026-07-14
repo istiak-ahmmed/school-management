@@ -29,6 +29,7 @@ class ClassRoutine extends Model
     protected $casts = [
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
+        'day_of_week' => \App\Enums\DayOfWeek::class,
     ];
 
     public function schoolClass(): BelongsTo

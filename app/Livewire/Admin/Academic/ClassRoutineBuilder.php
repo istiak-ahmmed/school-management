@@ -48,14 +48,19 @@ class ClassRoutineBuilder extends Component
     
     public $routineId = null; // For editing
 
-    public $days = [
-        0 => 'রবিবার',
-        1 => 'সোমবার',
-        2 => 'মঙ্গলবার',
-        3 => 'বুধবার',
-        4 => 'বৃহস্পতিবার',
-        6 => 'শনিবার', // Skipping Friday (5) as weekend
-    ];
+    public $days = [];
+
+    public function boot()
+    {
+        $this->days = [
+            0 => \App\Enums\DayOfWeek::Sunday->label(),
+            1 => \App\Enums\DayOfWeek::Monday->label(),
+            2 => \App\Enums\DayOfWeek::Tuesday->label(),
+            3 => \App\Enums\DayOfWeek::Wednesday->label(),
+            4 => \App\Enums\DayOfWeek::Thursday->label(),
+            6 => \App\Enums\DayOfWeek::Saturday->label(), // Skipping Friday (5) as weekend
+        ];
+    }
 
     #[Computed]
     public function periods()
@@ -265,7 +270,7 @@ class ClassRoutineBuilder extends Component
             // Organize routines into a matrix: [day][period]
             $fetchedRoutines = $query->get();
             foreach ($fetchedRoutines as $r) {
-                $routines[$r->day_of_week][$r->period_no] = $r;
+                $routines[$r->day_of_week->value][$r->period_no] = $r;
             }
         }
 

@@ -229,7 +229,7 @@ class FeeCollection extends Component
                     'invoice_id'       => $invoice->id,
                     'student_id'       => $this->selectedStudent->id,
                     'amount_paid'      => $amountForThis,
-                    'payment_method'   => $this->paymentMethod,
+                    'payment_method_id'=> $this->paymentMethod,
                     'transaction_id'   => $this->transactionId ?: null,
                     'payment_status'   => PaymentStatus::Success,
                     'paid_by'          => $this->paidByName ?: null,
@@ -314,7 +314,7 @@ class FeeCollection extends Component
     public function render()
     {
         return view('livewire.admin.finance.fee-collection', [
-            'paymentMethods' => PaymentMethod::cases(),
+            'paymentMethods' => \App\Models\PaymentMethod::where('status', 1)->get(),
         ]);
     }
 }

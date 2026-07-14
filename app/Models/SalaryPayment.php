@@ -24,7 +24,7 @@ class SalaryPayment extends Model
         'gross_salary',
         'net_salary',
         'advance_deducted',
-        'payment_method',
+        'payment_method_id',
         'transaction_id',
         'paid_at',
         'paid_by',
@@ -35,9 +35,26 @@ class SalaryPayment extends Model
     protected $casts = [
         'paid_at'        => 'datetime',
         'employee_type'  => EmployeeType::class,
-        'payment_method' => SalaryPaymentMethod::class,
         'status'         => SalaryStatus::class,
     ];
+
+    public function employee()
+    {
+        if ($this->employee_type === 0) {
+            return $this->belongsTo(Teacher::class, 'employee_id');
+        }
+        return $this->belongsTo(Staff::class, 'employee_id');
+    }
+
+    public function paidBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'paid_by');
+    }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
+    }
 
     public function payer(): BelongsTo
     {

@@ -82,15 +82,15 @@
                 <div class="grid grid-cols-3 gap-2 text-xs text-center">
                     @foreach($paymentMethods as $method)
                     <label class="cursor-pointer">
-                        <input type="radio" wire:model="paymentMethod" value="{{ $method->value }}" class="sr-only peer">
+                        <input type="radio" wire:model="paymentMethod" value="{{ $method->id }}" class="sr-only peer">
                         <div class="p-2 border-2 border-gray-200 rounded-lg peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 text-gray-600 font-medium transition">
-                            {{ $method->label() }}
+                            {{ $method->bn_name ?? $method->en_name }}
                         </div>
                     </label>
                     @endforeach
                 </div>
 
-                @if (in_array($paymentMethod, [1,2,3,5,6]))
+                @if ($paymentMethod && $paymentMethod != \App\Models\PaymentMethod::where('en_name', 'Cash')->value('id'))
                     <div class="mt-3">
                         <input type="text" wire:model="transactionId" placeholder="লেনদেন আইডি / চেক নম্বর"
                             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"/>

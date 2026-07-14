@@ -182,7 +182,7 @@
                             <label class="block text-xs font-medium text-gray-600 mb-1">পেমেন্ট পদ্ধতি</label>
                             <select wire:model="paymentMethod" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
                                 @foreach($paymentMethods as $method)
-                                    <option value="{{ $method->value }}">{{ $method->label() }}</option>
+                                    <option value="{{ $method->id }}">{{ $method->bn_name ?? $method->en_name }}</option>
                                 @endforeach
                             </select>
                         </div>

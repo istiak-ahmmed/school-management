@@ -1,0 +1,11 @@
+<?php
+
+return [
+    'sunday' => 'রবিবার',
+    'monday' => 'সোমবার',
+    'tuesday' => 'মঙ্গলবার',
+    'wednesday' => 'বুধবার',
+    'thursday' => 'বৃহস্পতিবার',
+    'friday' => 'শুক্রবার',
+    'saturday' => 'শনিবার',
+];

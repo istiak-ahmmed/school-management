@@ -197,7 +197,7 @@ class SalaryPaymentManager extends Component
                 'gross_salary'     => $this->selectedEmployee['gross_salary'],
                 'net_salary'       => $this->amountToPay, // Actual amount transferred
                 'advance_deducted' => $this->advanceToDeduct,
-                'payment_method'   => $this->paymentMethod,
+                'payment_method_id'=> $this->paymentMethod,
                 'transaction_id'   => $this->transactionId ?: null,
                 'paid_at'          => Carbon::now(),
                 'paid_by'          => auth()->id(),
@@ -261,7 +261,7 @@ class SalaryPaymentManager extends Component
     public function render()
     {
         return view('livewire.admin.finance.salary-payment-manager', [
-            'paymentMethods' => SalaryPaymentMethod::cases(),
+            'paymentMethods' => \App\Models\PaymentMethod::where('status', 1)->get(),
         ]);
     }
 }

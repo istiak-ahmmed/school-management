@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->string('voucher_no', 30)->unique();
-            $table->string('expense_head', 150)->index();
+            $table->foreignId('expense_category_id')->constrained()->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
             $table->tinyInteger('payment_method');   // 0=cash, 1=bank, 2=bkash
             $table->string('paid_to', 150)->nullable();
-            $table->string('receipt_path', 255)->nullable();
             $table->date('expense_date')->index();
             $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('entered_by')->nullable()->constrained('users')->nullOnDelete();

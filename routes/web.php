@@ -66,6 +66,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ── Finance & Accounts ──────────────────────────────────────────────────
     Route::get('/admin/finance/fee-types', \App\Livewire\Admin\Finance\FeeTypeManager::class)->name('admin.finance.fee-types');
     Route::get('/admin/finance/fee-structures', \App\Livewire\Admin\Finance\FeeStructureManager::class)->name('admin.finance.fee-structures');
+    Route::get('/admin/finance/expense-categories', \App\Livewire\Admin\Finance\ExpenseCategory\CategoryManager::class)->name('admin.finance.expense-categories');
+    Route::get('/admin/finance/expenses', \App\Livewire\Admin\Finance\Expense\ExpenseList::class)->name('admin.finance.expenses.index');
+    Route::get('/admin/finance/expenses/create', \App\Livewire\Admin\Finance\Expense\ExpenseForm::class)->name('admin.finance.expenses.create');
+    Route::get('/admin/finance/expenses/{id}/edit', \App\Livewire\Admin\Finance\Expense\ExpenseForm::class)->name('admin.finance.expenses.edit');
+    Route::get('/admin/finance/expenses/report', \App\Livewire\Admin\Finance\Expense\ExpenseReport::class)->name('admin.finance.expenses.report');
 
     // ── Academic Module (Class Routine) ──────────────────────────────────────
     Route::get('/admin/academic/class-routine-builder', \App\Livewire\Admin\Academic\ClassRoutineBuilder::class)->name('admin.academic.class-routine-builder');
@@ -73,6 +78,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ── Employee Management (Teachers & Staff) ───────────────────────────────
     Route::get('/admin/employees', \App\Livewire\Admin\Employee\EmployeeList::class)->name('admin.employees');
     Route::get('/admin/employees/create', \App\Livewire\Admin\Employee\EmployeeWizard::class)->name('admin.employees.create');
+
+    // ── Settings ─────────────────────────────────────────────────────────────
+    Route::get('/admin/settings/roles', \App\Livewire\Admin\Settings\RoleManager::class)->name('admin.settings.roles');
+    Route::get('/admin/settings/payment-methods', \App\Livewire\Admin\Settings\PaymentMethodList::class)->name('admin.settings.payment-methods');
 
     Route::view('/student/dashboard', 'dashboard')->name('student.dashboard');
 });
