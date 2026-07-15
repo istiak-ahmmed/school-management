@@ -19,11 +19,14 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 #[Title('বেতন পরিশোধ')]
 class SalaryPaymentManager extends Component
 {
+    use Sortable;
+
     public string $monthFilter;
     public string $employeeTypeFilter = '';
 
@@ -57,7 +60,7 @@ class SalaryPaymentManager extends Component
 
         // 1. Fetch Teachers
         if ($this->employeeTypeFilter === '' || $this->employeeTypeFilter === (string) EmployeeType::Teacher->value) {
-            $teachers = Teacher::with('user')->where('status', 1)->get();
+            $teachers = Teacher::with('user')->where('status', 1)->orderBy($this->sortField, $this->sortDirection)->get();
             foreach ($teachers as $teacher) {
                 $employees[] = $this->formatEmployeeData($teacher, EmployeeType::Teacher, $month);
             }
@@ -65,7 +68,7 @@ class SalaryPaymentManager extends Component
 
         // 2. Fetch Staff
         if ($this->employeeTypeFilter === '' || $this->employeeTypeFilter === (string) EmployeeType::Staff->value) {
-            $staffs = Staff::with('user')->where('status', 1)->get();
+            $staffs = Staff::with('user')->where('status', 1)->orderBy($this->sortField, $this->sortDirection)->get();
             foreach ($staffs as $staff) {
                 $employees[] = $this->formatEmployeeData($staff, EmployeeType::Staff, $month);
             }

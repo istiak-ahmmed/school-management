@@ -23,6 +23,20 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
+                        <th scope="col" class="px-5 py-3 font-medium text-center cursor-pointer hover:bg-gray-100 text-gray-500 text-xs tracking-wider"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th class="px-5 py-3 font-medium">ফি এর নাম</th>
                         <th class="px-5 py-3 font-medium text-center">কোড</th>
                         <th class="px-5 py-3 font-medium text-center">আদায় প্রক্রিয়া</th>
@@ -34,6 +48,9 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($feeTypes as $type)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 text-gray-800 text-center">
+                                {{ $loop->iteration }}
+                            </td>
                             <td class="px-5 py-3 text-gray-800 font-bold">
                                 {{ $type->name }}
                             </td>
@@ -63,7 +80,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-12 text-center text-gray-500 font-medium">
+                            <td colspan="7" class="px-5 py-12 text-center text-gray-500 font-medium">
                                 কোনো ফি এর ধরণ পাওয়া যায়নি।
                             </td>
                         </tr>

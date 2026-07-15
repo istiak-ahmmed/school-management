@@ -22,6 +22,20 @@
         <table class="w-full text-sm">
             <thead class="bg-gray-50 border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wider">
                 <tr>
+                        <th scope="col" class="bg-gray-50 border-b border-gray-100 text-center text-xs text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 font-medium"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                     <th class="px-5 py-3 font-medium">নাম</th>
                     <th class="px-5 py-3 font-medium">বিবরণ</th>
                     <th class="px-5 py-3 font-medium">অবস্থা</th>
@@ -31,6 +45,9 @@
             <tbody class="divide-y divide-gray-50">
                 @forelse ($categories as $category)
                     <tr>
+                            <td class="px-5 py-4 whitespace-nowrap text-gray-500 text-center">
+                                {{ $categories->firstItem() + $loop->index }}
+                            </td>
                         <td class="px-5 py-4 whitespace-nowrap text-gray-900 font-medium">{{ $category->name }}</td>
                         <td class="px-5 py-4 text-gray-500">{{ $category->description }}</td>
                         <td class="px-5 py-4 whitespace-nowrap">
@@ -45,7 +62,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-5 py-4 text-center text-gray-500">কোনো খাত পাওয়া যায়নি।</td>
+                        <td colspan="5" class="px-5 py-4 text-center text-gray-500">কোনো খাত পাওয়া যায়নি।</td>
                     </tr>
                 @endforelse
             </tbody>

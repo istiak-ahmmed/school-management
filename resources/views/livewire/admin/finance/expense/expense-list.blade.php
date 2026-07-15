@@ -27,6 +27,20 @@
             <table class="w-full text-sm">
                 <thead class="bg-gray-50 border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
+                        <th scope="col" class="bg-gray-50 border-b border-gray-100 text-center text-xs text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 font-medium"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th wire:click="sortBy('expense_date')" class="cursor-pointer px-5 py-3 font-medium hover:bg-gray-100">
                             তারিখ @if($sortField === 'expense_date') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
                         </th>
@@ -46,6 +60,9 @@
                 <tbody class="divide-y divide-gray-50">
                     @forelse ($expenses as $expense)
                         <tr>
+                            <td class="px-5 py-4 whitespace-nowrap text-gray-500 text-center">
+                                {{ $expenses->firstItem() + $loop->index }}
+                            </td>
                             <td class="px-5 py-4 whitespace-nowrap text-gray-900">{{ $expense->expense_date->format('d M, Y') }}</td>
                             <td class="px-5 py-4 whitespace-nowrap text-gray-500">{{ $expense->voucher_no }}</td>
                             <td class="px-5 py-4 whitespace-nowrap text-gray-900 font-medium">{{ optional($expense->category)->name }}</td>
@@ -67,7 +84,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-5 py-4 text-center text-gray-500">কোনো খরচ পাওয়া যায়নি।</td>
+                            <td colspan="9" class="px-5 py-4 text-center text-gray-500">কোনো খরচ পাওয়া যায়নি।</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -148,19 +165,27 @@
                             @if(count($viewingExpense->media) > 0)
                                 <div class="grid grid-cols-2 gap-3">
                                     @foreach($viewingExpense->media as $media)
+                                        @php $mediaUrl = asset('storage/' . $media->id . '/' . $media->file_name); @endphp
                                         <div class="border border-gray-200 rounded-lg overflow-hidden group relative">
                                             @if(Str::startsWith($media->mime_type, 'image/'))
-                                                <a href="{{ $media->getUrl() }}" target="_blank" class="block">
-                                                    <img src="{{ $media->getUrl('optimized') }}" alt="Attachment" class="w-full h-32 object-cover hover:opacity-80 transition">
+                                                <a href="{{ $mediaUrl }}" target="_blank" class="block">
+                                                    <img src="{{ $mediaUrl }}" alt="Attachment" class="w-full h-32 object-cover hover:opacity-80 transition">
                                                 </a>
+                                            @elseif($media->mime_type === 'application/pdf')
+                                                <div class="relative w-full h-32 bg-gray-50 overflow-hidden">
+                                                    <iframe src="{{ $mediaUrl }}#toolbar=0&navpanes=0&scrollbar=0" class="w-full h-[150%] -mt-6 border-0 pointer-events-none" title="PDF Preview"></iframe>
+                                                    <a href="{{ $mediaUrl }}" target="_blank" class="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-20 transition group-hover:bg-opacity-30">
+                                                        <span class="bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">View PDF</span>
+                                                    </a>
+                                                </div>
                                             @else
-                                                <a href="{{ $media->getUrl() }}" target="_blank" class="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-gray-100 transition">
+                                                <a href="{{ $mediaUrl }}" target="_blank" class="flex flex-col items-center justify-center h-32 bg-gray-50 hover:bg-gray-100 transition">
                                                     <svg class="w-10 h-10 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                                    <span class="text-xs font-semibold text-gray-600">PDF Document</span>
+                                                    <span class="text-xs font-semibold text-gray-600">Document</span>
                                                 </a>
                                             @endif
                                             
-                                            <div class="absolute bottom-0 inset-x-0 bg-black bg-opacity-50 text-white text-[10px] py-1 px-2 truncate opacity-0 group-hover:opacity-100 transition">
+                                            <div class="absolute bottom-0 inset-x-0 bg-black bg-opacity-50 text-white text-[10px] py-1 px-2 truncate opacity-0 group-hover:opacity-100 transition z-20">
                                                 {{ $media->name }}
                                             </div>
                                         </div>

@@ -8,11 +8,14 @@ use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 #[Title('ফি ধরণ (Fee Types)')]
 class FeeTypeManager extends Component
 {
+    use Sortable;
+
     public $name;
     public $code;
     public $is_recurring = false;

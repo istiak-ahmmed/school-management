@@ -3,11 +3,14 @@
 namespace App\Livewire\Admin\Settings;
 
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use App\Models\PaymentMethod;
 use Livewire\Attributes\Layout;
 
 class PaymentMethodList extends Component
 {
+    use Sortable;
+
     public $methods;
     public $showModal = false;
     public $methodId = null;
@@ -22,7 +25,7 @@ class PaymentMethodList extends Component
 
     public function loadMethods()
     {
-        $this->methods = PaymentMethod::all();
+        $this->methods = PaymentMethod::latest()->get();
     }
 
     public function create()

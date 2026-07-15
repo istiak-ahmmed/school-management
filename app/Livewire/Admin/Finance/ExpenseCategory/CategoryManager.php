@@ -4,10 +4,13 @@ namespace App\Livewire\Admin\Finance\ExpenseCategory;
 
 use App\Models\ExpenseCategory;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 
 class CategoryManager extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     public $name = '';
@@ -53,7 +56,7 @@ class CategoryManager extends Component
         );
 
         $this->showModal = false;
-        session()->flash('message', 'Category saved successfully.');
+        session()->flash('message', 'খাত সফলভাবে সেভ করা হয়েছে।');
     }
 
     public function toggleActive(ExpenseCategory $category)
@@ -64,17 +67,17 @@ class CategoryManager extends Component
     public function delete(ExpenseCategory $category)
     {
         if ($category->expenses()->count() > 0) {
-            session()->flash('error', 'Cannot delete category with associated expenses.');
+            session()->flash('error', 'এই খাতের অধীনে খরচ থাকায় এটি ডিলিট করা সম্ভব নয়।');
             return;
         }
         $category->delete();
-        session()->flash('message', 'Category deleted successfully.');
+        session()->flash('message', 'খাত সফলভাবে ডিলিট করা হয়েছে।');
     }
 
     public function render()
     {
         return view('livewire.admin.finance.expense-category.category-manager', [
-            'categories' => ExpenseCategory::orderBy('name')->paginate(10),
+            'categories' => ExpenseCategory::latest()->paginate(10),
         ])->layout('admin.layouts.app');
     }
 }

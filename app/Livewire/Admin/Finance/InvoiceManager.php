@@ -15,12 +15,15 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 
 #[Layout('admin.layouts.app')]
 #[Title('ইনভয়েস ব্যবস্থাপনা')]
 class InvoiceManager extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     public string $search       = '';
@@ -210,7 +213,7 @@ class InvoiceManager extends Component
         $totalDue       = $totalExpected - $totalCollected;
         $statusOptions  = InvoiceStatus::cases();
         $feeTypes       = FeeType::where('is_active', 1)->get();
-        $schoolClasses  = SchoolClass::where('status', 1)->get();
+        $schoolClasses  = SchoolClass::orderBy('numeric_order')->get();
 
         return view('livewire.admin.finance.invoice-manager', compact(
             'invoices', 'totalExpected', 'totalCollected', 'totalDue', 'statusOptions', 'currentMonth', 'feeTypes', 'schoolClasses'

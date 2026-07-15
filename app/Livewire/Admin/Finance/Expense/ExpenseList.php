@@ -40,7 +40,7 @@ class ExpenseList extends Component
         $expense = Expense::findOrFail($id);
         $expense->clearMediaCollection('receipts');
         $expense->delete();
-        session()->flash('message', 'Expense deleted successfully.');
+        session()->flash('message', 'খরচ সফলভাবে ডিলিট করা হয়েছে।');
     }
 
     public function viewExpense($id)

@@ -22,6 +22,20 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th scope="col" class="bg-gray-50 text-center cursor-pointer hover:bg-gray-100 font-medium text-gray-500 text-xs tracking-wider"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">বিষয়ের নাম (কোড)</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">শ্রেণী</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ধরন</th>
@@ -32,6 +46,9 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($subjects as $subject)
                         <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                {{ $loop->iteration }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {{ $subject->name }} 
                                 <span class="text-xs text-gray-500">({{ $subject->code }})</span>
@@ -52,7 +69,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                            <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                 কোনো বিষয় পাওয়া যায়নি।
                             </td>
                         </tr>

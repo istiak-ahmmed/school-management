@@ -76,6 +76,20 @@
             <table class="min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th scope="col" class="bg-gray-50 text-center cursor-pointer hover:bg-gray-100 font-medium text-gray-500 text-xs tracking-wider"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th class="px-4 py-3.5 text-left w-10">
                             <input type="checkbox" wire:model.live="selectAll"
                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-200">
@@ -91,6 +105,9 @@
                 <tbody class="divide-y divide-gray-50">
                     @forelse($this->students as $student)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 text-center">
+                                {{ $students->firstItem() + $loop->index }}
+                            </td>
                             <td class="px-4 py-3">
                                 <input type="checkbox" wire:model.live="selectedIds" value="{{ $student->id }}"
                                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-200">
@@ -143,7 +160,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-12 text-center text-gray-400">
+                            <td colspan="8" class="px-5 py-12 text-center text-gray-400">
                                 <div class="text-4xl mb-3">🎒</div>
                                 <p class="text-sm">কোনো শিক্ষার্থী পাওয়া যায়নি।</p>
                             </td>

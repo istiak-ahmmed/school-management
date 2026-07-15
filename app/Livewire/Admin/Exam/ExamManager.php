@@ -9,12 +9,15 @@ use App\Models\Exam;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 
 #[Layout('admin.layouts.app')]
 #[Title('পরীক্ষা ব্যবস্থাপনা')]
 class ExamManager extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     public $name;
@@ -148,7 +151,7 @@ class ExamManager extends Component
 
     public function render()
     {
-        $exams = Exam::with(['academicYear', 'creator'])->latest()->paginate(10);
+        $exams = Exam::with(['academicYear', 'creator'])->orderBy($this->sortField, $this->sortDirection)->paginate(10);
         $academicYears = AcademicYear::all();
         $examTypes = ExamType::cases();
         $examStatuses = ExamStatus::cases();

@@ -8,11 +8,14 @@ use App\Models\Student;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StudentManager extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     #[Url(as: 'q')]
@@ -71,7 +74,7 @@ class StudentManager extends Component
             ->when($this->filterClass, fn($q) => $q->where('class_id', $this->filterClass))
             ->when($this->filterSection, fn($q) => $q->where('section_id', $this->filterSection))
             ->when($this->filterStatus !== '', fn($q) => $q->where('status', $this->filterStatus))
-            ->latest()
+            ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(20);
     }
 

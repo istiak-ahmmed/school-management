@@ -8,10 +8,13 @@ use App\Models\SchoolClass;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 
 class ApplicationManager extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     #[Url(as: 'status')]

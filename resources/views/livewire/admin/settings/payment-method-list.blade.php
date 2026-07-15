@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
 <div>
     @section('header', 'Payment Methods')
 
@@ -28,6 +25,20 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th scope="col" class="bg-gray-50 text-center cursor-pointer hover:bg-gray-100 font-medium text-gray-500 text-xs tracking-wider"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ইংরেজি নাম</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">বাংলা নাম</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">স্ট্যাটাস</th>
@@ -37,6 +48,9 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse ($methods as $method)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                {{ $loop->iteration }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                                 {{ $method->en_name }}
                                 @if($method->is_system)
@@ -62,7 +76,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">কোনো মেথড পাওয়া যায়নি।</td>
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">কোনো মেথড পাওয়া যায়নি।</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -118,4 +132,3 @@
         </div>
     @endif
 </div>
-@endsection

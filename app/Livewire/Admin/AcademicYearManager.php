@@ -6,10 +6,13 @@ use App\Models\AcademicYear;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 class AcademicYearManager extends Component
 {
+    use Sortable;
+
     public $years;
 
     public $yearId = null;
@@ -34,7 +37,7 @@ class AcademicYearManager extends Component
 
     public function loadYears()
     {
-        $this->years = AcademicYear::orderBy('start_date', 'desc')->get();
+        $this->years = AcademicYear::orderBy($this->sortField, $this->sortDirection)->get();
     }
 
     public function save()

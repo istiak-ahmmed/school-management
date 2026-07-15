@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Settings;
 
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Livewire\Attributes\Layout;
@@ -10,6 +11,8 @@ use Livewire\Attributes\Layout;
 #[Layout('admin.layouts.app')]
 class RoleManager extends Component
 {
+    use Sortable;
+
     public $showModal = false;
     public $roleId = null;
     public $name = '';
@@ -91,7 +94,7 @@ class RoleManager extends Component
 
     public function render()
     {
-        $roles = Role::with('permissions')->get();
+        $roles = Role::with('permissions')->orderBy($this->sortField, $this->sortDirection)->get();
         $allPermissions = Permission::orderBy('name')->get();
         
         // Group permissions by module prefix

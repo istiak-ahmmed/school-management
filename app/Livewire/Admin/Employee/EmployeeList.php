@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Employee;
 
 use App\Models\User;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -12,6 +13,8 @@ use Livewire\Attributes\Title;
 #[Title('কর্মচারী তালিকা')]
 class EmployeeList extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     public $search = '';
@@ -68,7 +71,7 @@ class EmployeeList extends Component
             $query->where('is_active', $this->statusFilter);
         }
 
-        $employees = $query->latest()->paginate(10);
+        $employees = $query->orderBy($this->sortField, $this->sortDirection)->paginate(10);
 
         return view('livewire.admin.employee.employee-list', compact('employees'));
     }

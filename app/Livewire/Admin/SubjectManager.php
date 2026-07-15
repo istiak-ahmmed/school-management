@@ -7,10 +7,15 @@ use App\Models\Subject;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 class SubjectManager extends Component
 {
+    use Sortable;
+
+    
+
     public $subjects;
     public $classes;
 
@@ -39,12 +44,13 @@ class SubjectManager extends Component
 
     public function mount()
     {
+        $this->sortDirection = 'asc';
         $this->loadData();
     }
 
     public function loadData()
     {
-        $this->subjects = Subject::with('schoolClass')->orderBy('class_id')->orderBy('name')->get();
+        $this->subjects = Subject::with('schoolClass')->orderBy($this->sortField, $this->sortDirection)->get();
         $this->classes = SchoolClass::orderBy('numeric_order')->get();
     }
 

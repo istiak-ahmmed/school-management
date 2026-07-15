@@ -83,6 +83,20 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-100 text-left text-xs text-gray-500 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3 font-medium text-center cursor-pointer hover:bg-gray-100 text-gray-500 text-xs tracking-wider"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th class="px-5 py-3 font-medium">ইনভয়েস নং</th>
                         <th class="px-5 py-3 font-medium">শিক্ষার্থী</th>
                         <th class="px-5 py-3 font-medium">ফি ধরন</th>
@@ -106,6 +120,7 @@
                             };
                         @endphp
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 text-center text-sm text-gray-500">{{ $invoices->firstItem() + $loop->index }}</td>
                             <td class="px-5 py-3 font-mono text-xs text-gray-600">{{ $invoice->invoice_no }}</td>
                             <td class="px-5 py-3 font-medium text-gray-800">{{ $invoice->student->user->name ?? '—' }}</td>
                             <td class="px-5 py-3 text-gray-600">{{ $invoice->feeType->name ?? '—' }}</td>
@@ -133,7 +148,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-5 py-16 text-center">
+                            <td colspan="10" class="px-5 py-16 text-center">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                                         <svg class="w-10 h-10 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>

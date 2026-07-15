@@ -59,6 +59,21 @@ class ExpenseForm extends Component
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'voucher_no.required' => 'ভাউচার নং দেওয়া আবশ্যক।',
+            'voucher_no.unique' => 'এই ভাউচার নং টি আগে থেকেই ব্যবহৃত হচ্ছে।',
+            'expense_category_id.required' => 'খরচের খাত নির্বাচন করা আবশ্যক।',
+            'amount.required' => 'পরিমাণ দেওয়া আবশ্যক।',
+            'amount.numeric' => 'পরিমাণ অবশ্যই সংখ্যা হতে হবে।',
+            'payment_method_id.required' => 'পেমেন্ট মেথড নির্বাচন করা আবশ্যক।',
+            'expense_date.required' => 'তারিখ দেওয়া আবশ্যক।',
+            'receipts.*.mimes' => 'ফাইলগুলো অবশ্যই jpeg, png, jpg, webp অথবা pdf ফরম্যাটের হতে হবে।',
+            'receipts.*.max' => 'প্রতিটি ফাইলের সাইজ সর্বোচ্চ ৫ মেগাবাইট (5MB) হতে পারবে।',
+        ];
+    }
+
     public function save()
     {
         $this->validate();
@@ -87,7 +102,7 @@ class ExpenseForm extends Component
             }
         }
 
-        session()->flash('message', 'Expense saved successfully.');
+        session()->flash('message', 'খরচ সফলভাবে সেভ করা হয়েছে।');
         return redirect()->route('admin.finance.expenses.index');
     }
     

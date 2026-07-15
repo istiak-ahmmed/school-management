@@ -7,12 +7,15 @@ use App\Models\GradeRule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 use Livewire\WithPagination;
 
 #[Layout('admin.layouts.app')]
 #[Title('গ্রেডিং সিস্টেম')]
 class GradeRuleManager extends Component
 {
+    use Sortable;
+
     use WithPagination;
 
     public $academic_year_id = '';

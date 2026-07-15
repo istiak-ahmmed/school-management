@@ -20,6 +20,20 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
+                        <th scope="col" class="px-5 py-3 font-medium text-center cursor-pointer hover:bg-gray-100 text-gray-500 text-xs tracking-wider"  wire:click="sortBy('id')" >
+    <div class="flex items-center justify-center space-x-1">
+        <span>ক্র: নং</span>
+        @if($sortField === 'id')
+            @if($sortDirection === 'asc')
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            @else
+                <svg class="w-3 h-3 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            @endif
+        @else
+            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+        @endif
+    </div>
+</th>
                         <th class="px-5 py-3 font-medium">পরীক্ষার নাম</th>
                         <th class="px-5 py-3 font-medium">কোড</th>
                         <th class="px-5 py-3 font-medium">ধরন</th>
@@ -32,6 +46,9 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($exams as $exam)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 text-gray-800 text-center">
+                                {{ $loop->iteration }}
+                            </td>
                             <td class="px-5 py-3 text-gray-800 font-medium">
                                 {{ $exam->name }}
                             </td>
@@ -70,7 +87,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-12 text-center">
+                            <td colspan="8" class="px-5 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center">
                                     <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
                                         <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>

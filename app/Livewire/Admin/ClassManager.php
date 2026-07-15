@@ -7,10 +7,15 @@ use App\Models\SchoolClass;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 class ClassManager extends Component
 {
+    use Sortable;
+
+    
+
     public $classes;
     public $academicYears;
 
@@ -30,12 +35,13 @@ class ClassManager extends Component
 
     public function mount()
     {
+        $this->sortDirection = 'asc';
         $this->loadData();
     }
 
     public function loadData()
     {
-        $this->classes = SchoolClass::with('academicYear')->orderBy('numeric_order')->get();
+        $this->classes = SchoolClass::with('academicYear')->orderBy($this->sortField, $this->sortDirection)->get();
         $this->academicYears = AcademicYear::orderBy('start_date', 'desc')->get();
     }
 

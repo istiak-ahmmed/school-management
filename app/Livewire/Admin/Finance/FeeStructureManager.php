@@ -9,11 +9,14 @@ use App\Models\SchoolClass;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 #[Title('ফি স্ট্রাকচার (Fee Structure)')]
 class FeeStructureManager extends Component
 {
+    use Sortable;
+
     public $academic_year_id;
     public $class_id;
 

@@ -7,10 +7,15 @@ use App\Models\Section;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Livewire\Traits\Sortable;
 
 #[Layout('admin.layouts.app')]
 class SectionManager extends Component
 {
+    use Sortable;
+
+    
+
     public $sections;
     public $classes;
 
@@ -30,12 +35,13 @@ class SectionManager extends Component
 
     public function mount()
     {
+        $this->sortDirection = 'asc';
         $this->loadData();
     }
 
     public function loadData()
     {
-        $this->sections = Section::with('schoolClass')->orderBy('class_id')->orderBy('name')->get();
+        $this->sections = Section::with('schoolClass')->orderBy($this->sortField, $this->sortDirection)->get();
         $this->classes = SchoolClass::orderBy('numeric_order')->get();
     }
 
