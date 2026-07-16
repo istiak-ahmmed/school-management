@@ -71,7 +71,7 @@ class MarkAttendance extends Component
             if ($existingAttendance->has($student->id)) {
                 $this->attendanceData[$student->id] = $existingAttendance->get($student->id)->status;
             } else {
-                $this->attendanceData[$student->id] = 1;
+                $this->attendanceData[$student->id] = 'present';
             }
         }
     }
@@ -79,7 +79,7 @@ class MarkAttendance extends Component
     public function markAllPresent()
     {
         foreach ($this->students as $student) {
-            $this->attendanceData[$student->id] = 1;
+            $this->attendanceData[$student->id] = 'present';
         }
     }
 
@@ -97,7 +97,7 @@ class MarkAttendance extends Component
         }
 
         foreach ($this->students as $student) {
-            $status = $this->attendanceData[$student->id] ?? 1;
+            $status = $this->attendanceData[$student->id] ?? 'present';
             
             StudentAttendance::updateOrCreate(
                 [

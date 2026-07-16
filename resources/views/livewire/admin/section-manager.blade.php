@@ -38,6 +38,7 @@
 </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">শাখার নাম</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">শ্রেণী (Class)</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ফর্ম টিচার (Form Teacher)</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ক্যাপাসিটি (Capacity)</th>
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">অ্যাকশন</th>
                     </tr>
@@ -53,6 +54,9 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $section->schoolClass ? $section->schoolClass->name : 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $section->formTeacher ? $section->formTeacher->name : 'অনির্ধারিত' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $section->capacity }}
@@ -128,6 +132,17 @@
                                             @endforeach
                                         </select>
                                         @error('class_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="teacher_id" class="block text-sm font-medium text-gray-700">ফর্ম টিচার (ঐচ্ছিক)</label>
+                                        <select wire:model="teacher_id" id="teacher_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                            <option value="">-- শিক্ষক নির্বাচন করুন --</option>
+                                            @foreach($teachers as $teacher)
+                                                <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('teacher_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>

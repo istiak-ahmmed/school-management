@@ -25,10 +25,10 @@ class AttendanceReport extends Component
     public $students = [];
     public $daysInMonth = 0;
     public $summary = [
-        1 => 0,
-        2 => 0,
-        3 => 0,
-        4 => 0,
+        'present' => 0,
+        'absent' => 0,
+        'late' => 0,
+        'excused' => 0,
         'total' => 0
     ];
 
@@ -69,7 +69,7 @@ class AttendanceReport extends Component
             ->get();
 
         $this->reportData = [];
-        $this->summary = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 'total' => 0];
+        $this->summary = ['present' => 0, 'absent' => 0, 'late' => 0, 'excused' => 0, 'total' => 0];
 
         foreach ($this->students as $student) {
             $studentAtts = $attendances->where('student_id', $student->id)->keyBy(function($item) {
@@ -92,6 +92,55 @@ class AttendanceReport extends Component
                 }
             }
         }
+    }
+
+    public function downloadCsv()
+    {
+        $this->generateReport();
+        
+        $className = SchoolClass::find($this->selectedClass)->name ?? '';
+        $sectionName = Section::find($this->selectedSection)->name ?? '';
+        $monthName = Carbon::createFromFormat('Y-m', $this->month)->translatedFormat('F Y');
+        
+        $filename = "attendance_report_{$className}_{$sectionName}_{$monthName}.csv";
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF");
+            
+            $headerRow = ['Roll', 'Name'];
+            for ($day = 1; $day <= $this->daysInMonth; $day++) {
+                $headerRow[] = $day;
+            }
+            fputcsv($file, $headerRow);
+
+            foreach ($this->students as $student) {
+                $row = [
+                    $student->roll_no ?? '-',
+                    $student->user->name ?? $student->name ?? '-'
+                ];
+                
+                for ($day = 1; $day <= $this->daysInMonth; $day++) {
+                    $status = $this->reportData[$student->id][$day] ?? '-';
+                    $statusStr = '-';
+                    if ($status === 'present') $statusStr = 'P';
+                    elseif ($status === 'absent') $statusStr = 'A';
+                    elseif ($status === 'late') $statusStr = 'L';
+                    elseif ($status === 'excused') $statusStr = 'E';
+                    
+                    $row[] = $statusStr;
+                }
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function exportPdf()

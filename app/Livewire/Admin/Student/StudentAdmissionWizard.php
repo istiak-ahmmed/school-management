@@ -10,6 +10,10 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use App\Enums\Gender;
+use App\Enums\BloodGroup;
+use App\Enums\Religion;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -139,9 +143,9 @@ class StudentAdmissionWizard extends Component
             $this->validate([
                 'name' => 'required|string|max:150',
                 'date_birth' => 'nullable|date',
-                'gender' => 'required|integer',
-                'blood_group' => 'nullable|integer',
-                'religion' => 'required|integer',
+                'gender' => ['required', Rule::enum(Gender::class)],
+                'blood_group' => ['nullable', Rule::enum(BloodGroup::class)],
+                'religion' => ['required', Rule::enum(Religion::class)],
                 'student_phone' => 'nullable|string|max:15|unique:users,phone',
                 'address_present' => 'required|string',
             ]);
@@ -171,6 +175,7 @@ class StudentAdmissionWizard extends Component
                 'user_type' => 'student',
                 'is_active' => 1,
             ]);
+            $user->assignRole('student');
 
             // 2. Create Student Profile
             $student = Student::create([

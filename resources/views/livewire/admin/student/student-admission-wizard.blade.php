@@ -188,8 +188,9 @@
                                     class="text-red-500">*</span></label>
                             <select wire:model="gender"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                                <option value="1">ছেলে </option>
-                                <option value="2">মেয়ে </option>
+                                @foreach (\App\Enums\Gender::cases() as $genderEnum)
+                                    <option value="{{ $genderEnum->value }}">{{ $genderEnum->label() }}</option>
+                                @endforeach
                             </select>
                             @error('gender')
                                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -202,14 +203,9 @@
                             <select wire:model="blood_group"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                                 <option value="">জানা নেই</option>
-                                <option value="1">A+</option>
-                                <option value="2">A-</option>
-                                <option value="3">B+</option>
-                                <option value="4">B-</option>
-                                <option value="5">O+</option>
-                                <option value="6">O-</option>
-                                <option value="7">AB+</option>
-                                <option value="8">AB-</option>
+                                @foreach (\App\Enums\BloodGroup::cases() as $bgEnum)
+                                    <option value="{{ $bgEnum->value }}">{{ $bgEnum->label() }}</option>
+                                @endforeach
                             </select>
                             @error('blood_group')
                                 <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -222,11 +218,9 @@
                                     class="text-red-500">*</span></label>
                             <select wire:model="religion"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                                <option value="1">ইসলাম</option>
-                                <option value="2">হিন্দু</option>
-                                <option value="3">বৌদ্ধ</option>
-                                <option value="4">খ্রিস্টান</option>
-                                <option value="5">অন্যান্য</option>
+                                @foreach (\App\Enums\Religion::cases() as $religionEnum)
+                                    <option value="{{ $religionEnum->value }}">{{ $religionEnum->label() }}</option>
+                                @endforeach
                             </select>
                             @error('religion')
                                 <span class="text-red-500 text-xs">{{ $message }}</span>

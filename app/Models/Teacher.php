@@ -35,4 +35,22 @@ class Teacher extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the subjects assigned to the teacher.
+     */
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'teacher_subjects')
+            ->withPivot('class_id', 'section_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the sections where the teacher is a form teacher.
+     */
+    public function formSections()
+    {
+        return $this->hasMany(Section::class, 'teacher_id', 'user_id');
+    }
 }

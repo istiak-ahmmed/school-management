@@ -2,7 +2,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">হাজিরা রিপোর্ট</h2>
 
-        <form wire:submit.prevent="generateReport" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form wire:submit.prevent="generateReport" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">শ্রেণী <span class="text-red-500">*</span></label>
                 <select wire:model.live="selectedClass" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
@@ -32,6 +32,7 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-transparent mb-1 hidden md:block">&nbsp;</label>
                 <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition font-medium flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     রিপোর্ট তৈরি করুন
@@ -59,7 +60,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 font-medium">উপস্থিত (মোট)</p>
-                    <p class="text-xl font-bold text-gray-800">{{ $summary[1] }}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $summary['present'] }}</p>
                 </div>
             </div>
 
@@ -69,7 +70,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 font-medium">অনুপস্থিত (মোট)</p>
-                    <p class="text-xl font-bold text-gray-800">{{ $summary[2] }}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $summary['absent'] }}</p>
                 </div>
             </div>
 
@@ -79,7 +80,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 font-medium">বিলম্বে (মোট)</p>
-                    <p class="text-xl font-bold text-gray-800">{{ $summary[3] }}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $summary['late'] }}</p>
                 </div>
             </div>
 
@@ -91,7 +92,7 @@
                     <p class="text-xs text-gray-500 font-medium">হাজিরার হার</p>
                     <p class="text-xl font-bold text-gray-800">
                         @if($summary['total'] > 0)
-                            {{ number_format(($summary[1] / $summary['total']) * 100, 1) }}%
+                            {{ number_format(($summary['present'] / $summary['total']) * 100, 1) }}%
                         @else
                             0%
                         @endif
@@ -105,6 +106,10 @@
             <div class="p-4 border-b flex justify-between items-center bg-gray-50/50">
                 <h3 class="font-bold text-gray-700">ক্যালেন্ডার ভিউ</h3>
                 <div class="flex gap-2">
+                    <button type="button" wire:click="downloadCsv" class="text-sm bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-md hover:bg-indigo-100 transition font-medium border border-indigo-100 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        CSV ডাউনলোড
+                    </button>
                     <button type="button" wire:click="exportPdf" class="text-sm bg-red-50 text-red-600 px-3 py-1.5 rounded-md hover:bg-red-100 transition font-medium border border-red-100 flex items-center gap-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         PDF ডাউনলোড
@@ -129,36 +134,37 @@
                             @php
                                 $studentPresent = 0;
                                 $studentTotal = 0;
+                                $enrollment = $student->currentEnrollment;
                             @endphp
                             <tr class="hover:bg-gray-50/50 transition">
-                                <td class="py-2 px-3 text-center font-medium text-gray-600 sticky left-0 bg-white border-r">{{ $student->roll_no ?? '-' }}</td>
-                                <td class="py-2 px-3 font-medium text-gray-800 sticky left-12 bg-white border-r truncate max-w-[150px]" title="{{ $student->user->name }}">
-                                    {{ $student->user->name }}
+                                <td class="py-2 px-3 text-center font-medium text-gray-600 sticky left-0 bg-white border-r">{{ $enrollment ? $enrollment->roll_no : '-' }}</td>
+                                <td class="py-2 px-3 font-medium text-gray-800 sticky left-12 bg-white border-r truncate max-w-[150px]" title="{{ $student->name }}">
+                                    {{ $student->name }}
                                 </td>
                                 
                                 @for($d = 1; $d <= $daysInMonth; $d++)
                                     @php
                                         $status = $reportData[$student->id][$d] ?? null;
                                         if ($status) $studentTotal++;
-                                        if ($status === 1) $studentPresent++;
+                                        if ($status === 'present') $studentPresent++;
                                         
                                         $bgColor = 'bg-gray-50';
                                         $text = '-';
                                         $textColor = 'text-gray-300';
                                         
-                                        if ($status === 1) {
+                                        if ($status === 'present') {
                                             $bgColor = 'bg-green-100';
                                             $text = 'P';
                                             $textColor = 'text-green-700';
-                                        } elseif ($status === 2) {
+                                        } elseif ($status === 'absent') {
                                             $bgColor = 'bg-red-100';
                                             $text = 'A';
                                             $textColor = 'text-red-700';
-                                        } elseif ($status === 3) {
+                                        } elseif ($status === 'late') {
                                             $bgColor = 'bg-amber-100';
                                             $text = 'L';
                                             $textColor = 'text-amber-700';
-                                        } elseif ($status === 4) {
+                                        } elseif ($status === 'excused') {
                                             $bgColor = 'bg-blue-100';
                                             $text = 'E';
                                             $textColor = 'text-blue-700';

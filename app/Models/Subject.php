@@ -37,4 +37,14 @@ class Subject extends Model
             default => 'Unknown',
         };
     }
+
+    /**
+     * Get the teachers assigned to this subject.
+     */
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class, 'teacher_subjects')
+            ->withPivot('class_id', 'section_id')
+            ->withTimestamps();
+    }
 }

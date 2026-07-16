@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\SchoolClass;
 use App\Models\Section;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -14,10 +15,9 @@ class SectionManager extends Component
 {
     use Sortable;
 
-    
-
     public $sections;
     public $classes;
+    public $teachers;
 
     public $sectionId = null;
 
@@ -30,6 +30,9 @@ class SectionManager extends Component
     #[Validate('required|exists:classes,id')]
     public $class_id = '';
 
+    #[Validate('nullable|exists:users,id')]
+    public $teacher_id = null;
+
     public bool $showModal = false;
     public bool $isEditing = false;
 
@@ -41,8 +44,9 @@ class SectionManager extends Component
 
     public function loadData()
     {
-        $this->sections = Section::with('schoolClass')->orderBy($this->sortField, $this->sortDirection)->get();
+        $this->sections = Section::with(['schoolClass', 'formTeacher'])->orderBy($this->sortField, $this->sortDirection)->get();
         $this->classes = SchoolClass::orderBy('numeric_order')->get();
+        $this->teachers = User::role('teacher')->where('is_active', 1)->orderBy('name')->get();
     }
 
     public function create()
@@ -59,6 +63,7 @@ class SectionManager extends Component
         $this->name = $section->name;
         $this->capacity = $section->capacity;
         $this->class_id = $section->class_id;
+        $this->teacher_id = $section->teacher_id;
         
         $this->isEditing = true;
         $this->showModal = true;
@@ -74,6 +79,7 @@ class SectionManager extends Component
                 'name' => $this->name,
                 'capacity' => $this->capacity,
                 'class_id' => $this->class_id,
+                'teacher_id' => $this->teacher_id ?: null,
             ]);
             session()->flash('message', 'শাখা সফলভাবে আপডেট করা হয়েছে।');
         } else {
@@ -81,6 +87,7 @@ class SectionManager extends Component
                 'name' => $this->name,
                 'capacity' => $this->capacity,
                 'class_id' => $this->class_id,
+                'teacher_id' => $this->teacher_id ?: null,
             ]);
             session()->flash('message', 'নতুন শাখা যোগ করা হয়েছে।');
         }
@@ -98,7 +105,7 @@ class SectionManager extends Component
 
     public function resetForm()
     {
-        $this->reset(['sectionId', 'name', 'capacity', 'class_id', 'isEditing']);
+        $this->reset(['sectionId', 'name', 'capacity', 'class_id', 'teacher_id', 'isEditing']);
         $this->capacity = 50; // default capacity
         $this->resetValidation();
     }

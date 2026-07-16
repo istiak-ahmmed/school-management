@@ -2,7 +2,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">শিক্ষার্থীর হাজিরা গ্রহণ</h2>
 
-        <form wire:submit.prevent="loadStudents" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <form wire:submit.prevent="loadStudents" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">শ্রেণী <span class="text-red-500">*</span></label>
                 <select wire:model.live="selectedClass" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
@@ -32,6 +32,7 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-transparent mb-1 hidden md:block">&nbsp;</label>
                 <button type="submit" class="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition font-medium flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     শিক্ষার্থী খুঁজুন
@@ -69,66 +70,7 @@
                 </button>
             </div>
             
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50 text-gray-600 text-sm border-b">
-                            <th class="py-3 px-4 font-semibold w-16 text-center">রোল</th>
-                            <th class="py-3 px-4 font-semibold">শিক্ষার্থীর নাম</th>
-                            <th class="py-3 px-4 font-semibold">ভর্তি নং</th>
-                            <th class="py-3 px-4 font-semibold min-w-[320px]">হাজিরা স্ট্যাটাস</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 text-sm">
-                        @foreach($students as $student)
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="py-3 px-4 text-center font-medium text-gray-600">{{ $student->roll_no ?? '-' }}</td>
-                                <td class="py-3 px-4">
-                                    <div class="flex items-center gap-3">
-                                        @if($student->photo_path)
-                                            <img src="{{ Storage::url($student->photo_path) }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
-                                        @else
-                                            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs border border-emerald-200">
-                                                {{ mb_substr($student->user->name, 0, 1) }}
-                                            </div>
-                                        @endif
-                                        <span class="font-medium text-gray-800">{{ $student->user->name }}</span>
-                                    </div>
-                                </td>
-                                <td class="py-3 px-4 text-gray-500">{{ $student->admission_no }}</td>
-                                <td class="py-3 px-4">
-                                    <div class="flex items-center gap-3 bg-gray-50 rounded-lg p-1.5 inline-flex border border-gray-200 shadow-inner">
-                                        <label class="cursor-pointer">
-                                            <input type="radio" wire:model="attendanceData.{{ $student->id }}" value="1" class="peer sr-only">
-                                            <div class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors peer-checked:bg-green-500 peer-checked:text-white text-gray-600 hover:bg-gray-200">
-                                                উপস্থিত
-                                            </div>
-                                        </label>
-                                        <label class="cursor-pointer">
-                                            <input type="radio" wire:model="attendanceData.{{ $student->id }}" value="2" class="peer sr-only">
-                                            <div class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors peer-checked:bg-red-500 peer-checked:text-white text-gray-600 hover:bg-gray-200">
-                                                অনুপস্থিত
-                                            </div>
-                                        </label>
-                                        <label class="cursor-pointer">
-                                            <input type="radio" wire:model="attendanceData.{{ $student->id }}" value="3" class="peer sr-only">
-                                            <div class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors peer-checked:bg-amber-500 peer-checked:text-white text-gray-600 hover:bg-gray-200">
-                                                বিলম্বে
-                                            </div>
-                                        </label>
-                                        <label class="cursor-pointer">
-                                            <input type="radio" wire:model="attendanceData.{{ $student->id }}" value="4" class="peer sr-only">
-                                            <div class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors peer-checked:bg-blue-500 peer-checked:text-white text-gray-600 hover:bg-gray-200">
-                                                ছুটি
-                                            </div>
-                                        </label>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <x-shared.attendance-table :students="$students" :attendanceData="$attendanceData" :date="$date" />
             
             <div class="p-4 border-t bg-gray-50/50 flex justify-end">
                 <button type="button" wire:click="saveAttendance" class="bg-emerald-600 text-white px-6 py-2.5 rounded-lg hover:bg-emerald-700 transition font-medium shadow-sm flex items-center gap-2" wire:loading.attr="disabled">

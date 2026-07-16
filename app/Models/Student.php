@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Enums\Gender;
+use App\Enums\BloodGroup;
+use App\Enums\Religion;
 
 class Student extends Model
 {
@@ -36,6 +39,9 @@ class Student extends Model
         return [
             'date_birth' => 'date',
             'status'     => 'integer',
+            'gender'     => Gender::class,
+            'blood_group'=> BloodGroup::class,
+            'religion'   => Religion::class,
         ];
     }
 

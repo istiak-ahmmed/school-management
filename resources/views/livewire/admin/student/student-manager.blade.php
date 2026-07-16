@@ -106,7 +106,7 @@
                     @forelse($this->students as $student)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 text-center">
-                                {{ $students->firstItem() + $loop->index }}
+                                {{ $this->students->firstItem() + $loop->index }}
                             </td>
                             <td class="px-4 py-3">
                                 <input type="checkbox" wire:model.live="selectedIds" value="{{ $student->id }}"

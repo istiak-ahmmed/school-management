@@ -34,11 +34,11 @@ new #[Layout('layouts.guest')] class extends Component
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form wire:submit="login">
-        <!-- Phone Number -->
+        <!-- Email or Phone -->
         <div>
-            <x-input-label for="phone" :value="__('মোবাইল নাম্বার')" />
-            <x-text-input wire:model="form.phone" id="phone" class="block mt-1 w-full" type="text" name="phone" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('form.phone')" class="mt-2" />
+            <x-input-label for="login" :value="__('ইমেইল বা মোবাইল নাম্বার')" />
+            <x-text-input wire:model="form.login" id="login" class="block mt-1 w-full" type="text" name="login" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('form.login')" class="mt-2" />
         </div>
 
         <!-- Password -->

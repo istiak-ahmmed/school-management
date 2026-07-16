@@ -27,11 +27,11 @@
 
     <div style="margin-bottom: 15px;">
         <span class="summary-box">মোট শিক্ষার্থী: {{ count($students) }}</span>
-        <span class="summary-box">উপস্থিত: {{ $summary[1] }}</span>
-        <span class="summary-box">অনুপস্থিত: {{ $summary[2] }}</span>
-        <span class="summary-box">বিলম্বে: {{ $summary[3] }}</span>
-        <span class="summary-box">ছুটি: {{ $summary[4] }}</span>
-        <span class="summary-box">হাজিরার হার: {{ $summary['total'] > 0 ? number_format(($summary[1] / $summary['total']) * 100, 1) : 0 }}%</span>
+        <span class="summary-box">উপস্থিত: {{ $summary['present'] }}</span>
+        <span class="summary-box">অনুপস্থিত: {{ $summary['absent'] }}</span>
+        <span class="summary-box">বিলম্বে: {{ $summary['late'] }}</span>
+        <span class="summary-box">ছুটি: {{ $summary['excused'] }}</span>
+        <span class="summary-box">হাজিরার হার: {{ $summary['total'] > 0 ? number_format(($summary['present'] / $summary['total']) * 100, 1) : 0 }}%</span>
     </div>
 
     <table>
@@ -53,19 +53,19 @@
                 @endphp
                 <tr>
                     <td>{{ $student->roll_no ?? '-' }}</td>
-                    <td class="text-left">{{ $student->user->name }}</td>
+                    <td class="text-left">{{ $student->user->name ?? $student->name ?? '-' }}</td>
                     @for($d = 1; $d <= $daysInMonth; $d++)
                         @php
                             $status = $reportData[$student->id][$d] ?? null;
                             if ($status) $studentTotal++;
-                            if ($status === 1) $studentPresent++;
+                            if ($status === 'present') $studentPresent++;
                             
                             $class = '';
                             $text = '-';
-                            if ($status === 1) { $class = 'p'; $text = 'P'; }
-                            elseif ($status === 2) { $class = 'a'; $text = 'A'; }
-                            elseif ($status === 3) { $class = 'l'; $text = 'L'; }
-                            elseif ($status === 4) { $class = 'e'; $text = 'E'; }
+                            if ($status === 'present') { $class = 'p'; $text = 'P'; }
+                            elseif ($status === 'absent') { $class = 'a'; $text = 'A'; }
+                            elseif ($status === 'late') { $class = 'l'; $text = 'L'; }
+                            elseif ($status === 'excused') { $class = 'e'; $text = 'E'; }
                         @endphp
                         <td class="{{ $class }}">{{ $text }}</td>
                     @endfor
