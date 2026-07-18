@@ -27,13 +27,21 @@ class ExamRoutine extends Component
             ->unique()
             ->toArray();
 
-        // Get exams that have routines for teacher's classes
-        $exams = Exam::whereHas('routines', function ($q) use ($assignedClassIds) {
-            $q->whereIn('class_id', $assignedClassIds);
+        // Get exams that have routines for teacher's classes OR where teacher is assigned as guard
+        $exams = Exam::whereHas('routines', function ($q) use ($assignedClassIds, $teacher) {
+            $q->whereIn('class_id', $assignedClassIds)
+              ->orWhereHas('teachers', function ($sq) use ($teacher) {
+                  $sq->where('teachers.id', $teacher->id);
+              });
         })
-        ->with(['routines' => function ($q) use ($assignedClassIds) {
-            $q->with(['subject', 'schoolClass'])
-              ->whereIn('class_id', $assignedClassIds)
+        ->with(['routines' => function ($q) use ($assignedClassIds, $teacher) {
+            $q->where(function($query) use ($assignedClassIds, $teacher) {
+                  $query->whereIn('class_id', $assignedClassIds)
+                        ->orWhereHas('teachers', function ($sq) use ($teacher) {
+                            $sq->where('teachers.id', $teacher->id);
+                        });
+              })
+              ->with(['subject', 'schoolClass', 'teachers'])
               ->orderBy('exam_date')
               ->orderBy('start_time');
         }])

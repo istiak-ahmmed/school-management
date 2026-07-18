@@ -6,3 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+use Illuminate\Support\Facades\Schedule;
+use App\Jobs\SendDueFeeRemindersJob;
+
+Schedule::job(new SendDueFeeRemindersJob)->dailyAt('10:00');

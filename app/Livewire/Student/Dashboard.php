@@ -34,9 +34,9 @@ class Dashboard extends Component
             ->count();
             
         $presentDays = StudentAttendance::where('student_id', $student->id)
-            ->whereMonth('date', $currentMonth)
-            ->whereYear('date', $currentYear)
-            ->where('status', 'present')
+            ->whereYear('date', Carbon::now()->year)
+            ->whereMonth('date', Carbon::now()->month)
+            ->where('status', 1)
             ->count();
             
         $attendancePercentage = $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0;

@@ -1,5 +1,5 @@
-<div class="space-y-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+<div class="space-y-6 print:m-0 print:p-0">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 print:hidden">
         <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">হাজিরা রিপোর্ট</h2>
 
         <form wire:submit.prevent="generateReport" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
@@ -27,7 +27,9 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">মাস <span class="text-red-500">*</span></label>
-                <input type="month" wire:model="month" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                <div wire:ignore>
+                    <input type="month" wire:model="month" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                </div>
                 @error('month') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
             </div>
 
@@ -43,7 +45,7 @@
 
     @if(!empty($students))
         <!-- Summary Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 print:hidden">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-4">
                 <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -102,18 +104,23 @@
         </div>
 
         <!-- Data Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-4 border-b flex justify-between items-center bg-gray-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 print:shadow-none print:border-none">
+            
+            <!-- Printable Header -->
+            <div class="hidden print:block text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">দারুল হিকমাহ আল-ইসলামিয়া মাদ্রাসা</h1>
+                <p class="text-lg text-gray-600 mt-1">হাজিরা রিপোর্ট</p>
+                <p class="text-sm text-gray-500 mt-1">
+                    শ্রেণী: {{ $classes->firstWhere('id', $selectedClass)?->name ?? '' }} | 
+                    শাখা: {{ $sections->firstWhere('id', $selectedSection)?->name ?? '' }} | 
+                    মাস: {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->translatedFormat('F Y') }}
+                </p>
+            </div>
+
+            <div class="p-4 border-b flex justify-between items-center bg-gray-50/50 rounded-t-xl print:hidden">
                 <h3 class="font-bold text-gray-700">ক্যালেন্ডার ভিউ</h3>
                 <div class="flex gap-2">
-                    <button type="button" wire:click="downloadCsv" class="text-sm bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-md hover:bg-indigo-100 transition font-medium border border-indigo-100 flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        CSV ডাউনলোড
-                    </button>
-                    <button type="button" wire:click="exportPdf" class="text-sm bg-red-50 text-red-600 px-3 py-1.5 rounded-md hover:bg-red-100 transition font-medium border border-red-100 flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        PDF ডাউনলোড
-                    </button>
+                    <x-export-button />
                 </div>
             </div>
             
@@ -134,37 +141,36 @@
                             @php
                                 $studentPresent = 0;
                                 $studentTotal = 0;
-                                $enrollment = $student->currentEnrollment;
                             @endphp
                             <tr class="hover:bg-gray-50/50 transition">
-                                <td class="py-2 px-3 text-center font-medium text-gray-600 sticky left-0 bg-white border-r">{{ $enrollment ? $enrollment->roll_no : '-' }}</td>
-                                <td class="py-2 px-3 font-medium text-gray-800 sticky left-12 bg-white border-r truncate max-w-[150px]" title="{{ $student->name }}">
-                                    {{ $student->name }}
+                                <td class="py-2 px-3 text-center font-medium text-gray-600 sticky left-0 bg-white border-r">{{ $student->roll_no ?? '-' }}</td>
+                                <td class="py-2 px-3 font-medium text-gray-800 sticky left-12 bg-white border-r truncate max-w-[150px]" title="{{ $student->user->name ?? $student->name }}">
+                                    {{ $student->user->name ?? $student->name }}
                                 </td>
                                 
                                 @for($d = 1; $d <= $daysInMonth; $d++)
                                     @php
                                         $status = $reportData[$student->id][$d] ?? null;
                                         if ($status) $studentTotal++;
-                                        if ($status === 'present') $studentPresent++;
+                                        if ($status === 1) $studentPresent++;
                                         
                                         $bgColor = 'bg-gray-50';
                                         $text = '-';
                                         $textColor = 'text-gray-300';
                                         
-                                        if ($status === 'present') {
+                                        if ($status === 1) {
                                             $bgColor = 'bg-green-100';
                                             $text = 'P';
                                             $textColor = 'text-green-700';
-                                        } elseif ($status === 'absent') {
+                                        } elseif ($status === 2) {
                                             $bgColor = 'bg-red-100';
                                             $text = 'A';
                                             $textColor = 'text-red-700';
-                                        } elseif ($status === 'late') {
+                                        } elseif ($status === 3) {
                                             $bgColor = 'bg-amber-100';
                                             $text = 'L';
                                             $textColor = 'text-amber-700';
-                                        } elseif ($status === 'excused') {
+                                        } elseif ($status === 4) {
                                             $bgColor = 'bg-blue-100';
                                             $text = 'E';
                                             $textColor = 'text-blue-700';

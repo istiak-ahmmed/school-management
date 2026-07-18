@@ -87,6 +87,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/employees', \App\Livewire\Admin\Employee\EmployeeList::class)->name('admin.employees');
         Route::get('/admin/employees/create', \App\Livewire\Admin\Employee\EmployeeWizard::class)->name('admin.employees.create');
 
+        // ── HR & Leave Management ────────────────────────────────────────────────
+        Route::get('/admin/hr/leave-types', \App\Livewire\Admin\HR\LeaveTypeManager::class)->name('admin.hr.leave-types');
+        Route::get('/admin/hr/leave-applications', \App\Livewire\Admin\HR\LeaveApplications::class)->name('admin.hr.leave-applications');
+        Route::get('/admin/hr/leave-balance-report', \App\Livewire\Admin\HR\LeaveBalanceReport::class)->name('admin.hr.leave-balance-report');
+        Route::get('/admin/hr/staff-attendance', \App\Livewire\Admin\HR\MarkStaffAttendance::class)->name('admin.hr.staff-attendance');
+
         // ── Communication ────────────────────────────────────────────────────────
         Route::get('/admin/communication/notices', \App\Livewire\Admin\Communication\NoticeManager::class)->name('admin.communication.notices');
         Route::get('/admin/communication/sms', \App\Livewire\Admin\Communication\SmsSender::class)->name('admin.communication.sms');
@@ -116,11 +122,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/profile', \App\Livewire\Teacher\MyProfile::class)->name('teacher.profile');
         Route::get('/my-classes', \App\Livewire\Teacher\MyClasses::class)->name('teacher.my-classes');
         Route::get('/attendance', \App\Livewire\Teacher\AttendanceManager::class)->name('teacher.attendance');
+        Route::get('/attendance-report', \App\Livewire\Teacher\AttendanceReport::class)->name('teacher.attendance-report');
         Route::get('/marks-entry', \App\Livewire\Teacher\MarksEntry::class)->name('teacher.marks-entry');
         Route::get('/exam-routine', \App\Livewire\Teacher\ExamRoutine::class)->name('teacher.exam-routine');
         Route::get('/class-routine', \App\Livewire\Teacher\ClassRoutine::class)->name('teacher.class-routine');
         Route::get('/salary', \App\Livewire\Teacher\MySalary::class)->name('teacher.salary');
         Route::get('/notices', \App\Livewire\Teacher\NoticeBoard::class)->name('teacher.notices');
+        
+        // ── HR & Leave Management ────────────────────────────────────────────────
+        Route::get('/my-attendance', \App\Livewire\Teacher\MyAttendance::class)->name('teacher.my-attendance');
+        Route::get('/apply-leave', \App\Livewire\Teacher\ApplyLeave::class)->name('teacher.apply-leave');
+        Route::get('/salary-slip/{payment}', [\App\Http\Controllers\Teacher\SalarySlipController::class, 'show'])->name('teacher.salary-slip');
     });
 
     // ── Student Portal ───────────────────────────────────────────────────────

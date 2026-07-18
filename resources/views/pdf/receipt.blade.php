@@ -4,143 +4,223 @@
     <meta charset="UTF-8">
     <title>রসিদ - {{ $payment->payment_no }}</title>
     <style>
+        @import url('https://fonts.maateen.me/kalpurush/font.css');
+        
         body {
-            font-family: 'Kalpurush', 'SolaimanLipi', 'Hind Siliguri', 'Nirmala UI', sans-serif;
+            font-family: 'Kalpurush', Arial, sans-serif;
             margin: 0;
-            padding: 10px;
+            padding: 20px;
             font-size: 14px;
-            color: #333;
+            color: #374151;
+            background-color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #e5e7eb;
+            padding: 30px;
+            border-radius: 8px;
         }
         .header {
-            text-align: center;
-            border-bottom: 2px solid #2ecc71;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0891b2; /* Cyan-600 */
+            padding-bottom: 15px;
+            margin-bottom: 25px;
         }
-        .school-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        .receipt-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-            background-color: #f1f8e9;
-            padding: 5px;
-            border: 1px solid #c5e1a5;
-        }
-        .info-table, .item-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-        .info-table td {
-            padding: 4px;
-            vertical-align: top;
-        }
-        .item-table th, .item-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        .school-info {
             text-align: left;
         }
-        .item-table th {
+        .school-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #4f46e5; /* Indigo-600 */
+            margin-bottom: 4px;
+        }
+        .school-address {
+            color: #6b7280;
+            font-size: 13px;
+        }
+        .receipt-badge {
+            background-color: #e0f2fe; /* Light Cyan */
+            color: #0369a1; /* Dark Cyan */
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 16px;
+            font-weight: 700;
+            border: 1px solid #bae6fd;
+        }
+        .info-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
             background-color: #f9fafb;
-            font-weight: bold;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .info-row {
+            display: table-row;
+        }
+        .info-cell {
+            display: table-cell;
+            padding: 6px 12px;
+            vertical-align: top;
+        }
+        .label {
+            font-weight: 600;
+            color: #4b5563;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .table th {
+            background-color: #4f46e5; /* Indigo-600 */
+            color: #ffffff;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+        }
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
         }
         .text-right {
             text-align: right !important;
         }
-        .footer {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
+        .text-center {
+            text-align: center !important;
         }
-        .signature {
-            border-top: 1px solid #333;
-            width: 200px;
-            text-align: center;
-            padding-top: 5px;
+        .total-row td {
+            font-weight: 700;
+            font-size: 16px;
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .notes-section {
+            background-color: #fffbeb; /* Light Amber */
+            border-left: 4px solid #f59e0b; /* Amber */
+            padding: 12px 16px;
+            margin-bottom: 40px;
+            border-radius: 0 4px 4px 0;
+            font-size: 13px;
+        }
+        .footer {
+            display: table;
+            width: 100%;
             margin-top: 50px;
+        }
+        .signature-box {
+            display: table-cell;
+            width: 50%;
+            text-align: center;
+        }
+        .signature-line {
+            border-top: 1px solid #9ca3af;
+            width: 200px;
+            margin: 0 auto;
+            padding-top: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+        .signature-name {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        @media print {
+            body { padding: 0; background-color: #fff; }
+            .container { border: none; padding: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="school-name">{{ config('app.name', 'School Management System') }}</div>
-        <div>School Address Here</div>
-        <div class="receipt-title">মানি রসিদ (পেমেন্ট স্লিপ)</div>
-    </div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="school-info">
+                <div class="school-name">{{ config('app.name', 'School Management System') }}</div>
+                <div class="school-address">School Address Here<br>Phone: +880 1234 567890 | Email: info@school.com</div>
+            </div>
+            <div>
+                <div class="receipt-badge">মানি রসিদ (পেমেন্ট স্লিপ)</div>
+            </div>
+        </div>
 
-    <table class="info-table">
-        <tr>
-            <td width="15%"><strong>রসিদ নং:</strong></td>
-            <td width="35%">{{ $payment->payment_no }}</td>
-            <td width="15%"><strong>তারিখ:</strong></td>
-            <td width="35%">{{ $payment->paid_at->format('d M Y, h:i A') }}</td>
-        </tr>
-        <tr>
-            <td><strong>শিক্ষার্থী:</strong></td>
-            <td>{{ $payment->student->user->name ?? 'N/A' }}</td>
-            <td><strong>ভর্তি নং:</strong></td>
-            <td>{{ $payment->student->admission_no ?? 'N/A' }}</td>
-        </tr>
-        <tr>
-            <td><strong>শ্রেণী:</strong></td>
-            <td>{{ $payment->student->schoolClass->name ?? 'N/A' }}</td>
-            <td><strong>রোল নং:</strong></td>
-            <td>{{ $payment->student->roll_no ?? 'N/A' }}</td>
-        </tr>
-    </table>
+        <!-- Meta Info -->
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-cell"><span class="label">রসিদ নং:</span> {{ $payment->payment_no }}</div>
+                <div class="info-cell"><span class="label">তারিখ:</span> {{ $payment->paid_at->format('d M Y, h:i A') }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-cell"><span class="label">শিক্ষার্থী:</span> {{ $payment->student->user->name ?? 'N/A' }}</div>
+                <div class="info-cell"><span class="label">ভর্তি নং:</span> {{ $payment->student->admission_no ?? 'N/A' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-cell"><span class="label">শ্রেণী:</span> {{ $payment->student->schoolClass->name ?? 'N/A' }}</div>
+                <div class="info-cell"><span class="label">রোল নং:</span> {{ $payment->student->roll_no ?? 'N/A' }}</div>
+            </div>
+        </div>
 
-    <table class="item-table">
-        <thead>
-            <tr>
-                <th>বিবরণ (ইনভয়েস: {{ $payment->invoice->invoice_no }})</th>
-                <th>মাস</th>
-                <th class="text-right">পেমেন্ট মাধ্যম</th>
-                <th class="text-right">পরিমাণ (৳)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ $payment->invoice->feeType->name ?? 'ফি' }}</td>
-                <td>{{ $payment->invoice->month_year ?? '-' }}</td>
-                <td class="text-right">{{ $payment->payment_method->label() }}</td>
-                <td class="text-right"><strong>{{ number_format($payment->amount_paid, 2) }}</strong></td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Payment Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="border-radius: 6px 0 0 0;">বিবরণ (ইনভয়েস: {{ $payment->invoice->invoice_no }})</th>
+                    <th>মাস</th>
+                    <th class="text-right">পেমেন্ট মাধ্যম</th>
+                    <th class="text-right" style="border-radius: 0 6px 0 0;">পরিমাণ (৳)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $payment->invoice->feeType->name ?? 'ফি' }}</td>
+                    <td>{{ $payment->invoice->month_year ?? '-' }}</td>
+                    <td class="text-right">
+                        {{ $payment->paymentMethod ? ($payment->paymentMethod->bn_name ?? $payment->paymentMethod->en_name) : '-' }}
+                    </td>
+                    <td class="text-right">{{ number_format($payment->amount_paid, 2) }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" class="text-right">মোট প্রদান:</td>
+                    <td class="text-right text-indigo-600">৳ {{ number_format($payment->amount_paid, 2) }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-    @if($payment->transaction_id || $payment->note)
-    <div style="font-size: 12px; margin-bottom: 20px;">
-        @if($payment->transaction_id)
-            <p><strong>লেনদেন আইডি:</strong> {{ $payment->transaction_id }}</p>
+        <!-- Notes -->
+        @if($payment->transaction_id || $payment->note)
+        <div class="notes-section">
+            @if($payment->transaction_id)
+                <div style="margin-bottom: 4px;"><strong>লেনদেন আইডি (Txn ID):</strong> {{ $payment->transaction_id }}</div>
+            @endif
+            @if($payment->note)
+                <div><strong>মন্তব্য:</strong> {{ $payment->note }}</div>
+            @endif
+        </div>
         @endif
-        @if($payment->note)
-            <p><strong>মন্তব্য:</strong> {{ $payment->note }}</p>
-        @endif
-    </div>
-    @endif
 
-    <table width="100%">
-        <tr>
-            <td>
-                <div class="signature" style="float: left;">
-                    {{ $payment->collector->name ?? 'System' }}<br>
-                    <strong>সংগ্রহকারী</strong>
-                </div>
-            </td>
-            <td>
-                <div class="signature" style="float: right;">
-                    <br>
-                    <strong>প্রদানকারী/অভিভাবক</strong>
-                </div>
-            </td>
-        </tr>
-    </table>
+        <!-- Signatures -->
+        <div class="footer">
+            <div class="signature-box">
+                <div class="signature-name">{{ $payment->collector->name ?? 'System' }}</div>
+                <div class="signature-line">সংগ্রহকারীর স্বাক্ষর</div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-name"><br></div>
+                <div class="signature-line">প্রদানকারী/অভিভাবকের স্বাক্ষর</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; font-size: 11px; color: #9ca3af;">
+            This is a computer generated receipt and does not require a physical signature for validity.
+        </div>
+    </div>
 
     <script>
         window.onload = function() {

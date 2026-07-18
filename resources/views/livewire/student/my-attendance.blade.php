@@ -74,21 +74,21 @@
                                     {{ $date->format('l') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($record->status === 'present')
+                                    @if($record->status === 1)
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
                                             উপস্থিত (Present)
                                         </span>
-                                    @elseif($record->status === 'absent')
+                                    @elseif($record->status === 2)
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                             অনুপস্থিত (Absent)
                                         </span>
-                                    @elseif($record->status === 'late')
+                                    @elseif($record->status === 3)
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
                                             বিলম্ব (Late)
                                         </span>
-                                    @elseif($record->status === 'half_day')
+                                    @elseif($record->status === 4)
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            অর্ধদিবস (Half Day)
+                                            ছুটি (Excused)
                                         </span>
                                     @endif
                                 </td>

@@ -22,10 +22,6 @@ class InvoiceController extends Controller
             'payments',
         ]);
 
-        $pdf = Pdf::loadView('pdf.invoice', compact('invoice'))
-            ->setPaper('a5', 'portrait')
-            ->setOption('dpi', 150);
-
-        return $pdf->stream("invoice-{$invoice->invoice_no}.pdf");
+        return view('pdf.invoice', compact('invoice'));
     }
 }

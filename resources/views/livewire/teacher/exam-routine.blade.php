@@ -1,7 +1,7 @@
 <div>
     <div class="mb-6">
         <h2 class="text-2xl font-bold text-gray-800">পরীক্ষার রুটিন</h2>
-        <p class="text-sm text-gray-500">আপনার শ্রেণীর পরীক্ষার সময়সূচী</p>
+        <p class="text-sm text-gray-500">আপনার ইনভিজিলেটর ডিউটি এবং শ্রেণীর পরীক্ষার সময়সূচী</p>
     </div>
 
     @if($exams->count() > 0)
@@ -51,6 +51,14 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                             {{ $routine->subject->name ?? 'N/A' }}
+                                            @php
+                                                $isGuard = $routine->teachers->contains('id', auth()->user()->teacher->id);
+                                            @endphp
+                                            @if($isGuard)
+                                                <div class="mt-1">
+                                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">ইনভিজিলেটর</span>
+                                                </div>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                             {{ $routine->schoolClass->name ?? 'N/A' }}
@@ -84,7 +92,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-16 text-center">
             <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             <h3 class="text-lg font-medium text-gray-900 mb-1">কোনো পরীক্ষার রুটিন নেই</h3>
-            <p class="text-sm text-gray-500">আপনার শ্রেণীর কোনো পরীক্ষার রুটিন এখনো তৈরি হয়নি।</p>
+            <p class="text-sm text-gray-500">আপনার কোনো ইনভিজিলেটর ডিউটি বা আপনার শ্রেণীর কোনো পরীক্ষার রুটিন এখনো তৈরি হয়নি।</p>
         </div>
     @endif
 </div>

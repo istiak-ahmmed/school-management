@@ -58,14 +58,14 @@
                         @php
                             $status = $reportData[$student->id][$d] ?? null;
                             if ($status) $studentTotal++;
-                            if ($status === 'present') $studentPresent++;
+                            if ($status === 1) $studentPresent++;
                             
                             $class = '';
                             $text = '-';
-                            if ($status === 'present') { $class = 'p'; $text = 'P'; }
-                            elseif ($status === 'absent') { $class = 'a'; $text = 'A'; }
-                            elseif ($status === 'late') { $class = 'l'; $text = 'L'; }
-                            elseif ($status === 'excused') { $class = 'e'; $text = 'E'; }
+                            if ($status === 1) { $class = 'p'; $text = 'P'; }
+                            elseif ($status === 2) { $class = 'a'; $text = 'A'; }
+                            elseif ($status === 3) { $class = 'l'; $text = 'L'; }
+                            elseif ($status === 4) { $class = 'e'; $text = 'E'; }
                         @endphp
                         <td class="{{ $class }}">{{ $text }}</td>
                     @endfor

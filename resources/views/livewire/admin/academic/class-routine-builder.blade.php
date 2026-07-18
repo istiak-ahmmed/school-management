@@ -1,10 +1,22 @@
 <div>
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-wrap justify-between items-center mb-6 gap-4 print:hidden">
         <h2 class="text-2xl font-bold text-gray-800">ক্লাস রুটিন বিল্ডার</h2>
+        @if($class_id)
+        <div class="flex gap-2">
+            <button wire:click="exportToPdf" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex items-center gap-2 text-sm font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                প্রিন্ট / PDF
+            </button>
+            <button wire:click="exportToExcel" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 text-sm font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Excel
+            </button>
+        </div>
+        @endif
     </div>
 
     <!-- Filters -->
-    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-end">
+    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-end print:hidden">
         <div class="flex-1 min-w-[200px]">
             <label class="block text-sm font-medium text-gray-700 mb-1">শ্রেণী <span class="text-red-500">*</span></label>
             <select wire:model.live="class_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
@@ -30,20 +42,50 @@
     </div>
 
     @if (session()->has('error'))
-        <div class="mb-4 bg-red-50 text-red-700 p-4 rounded-lg border border-red-100">
+        <div class="mb-4 bg-red-50 text-red-700 p-4 rounded-lg border border-red-100 print:hidden">
             {{ session('error') }}
         </div>
     @endif
     @if (session()->has('success'))
-        <div class="mb-4 bg-emerald-50 text-emerald-700 p-4 rounded-lg border border-emerald-100 flex items-center gap-3">
+        <div class="mb-4 bg-emerald-50 text-emerald-700 p-4 rounded-lg border border-emerald-100 flex items-center gap-3 print:hidden">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             {{ session('success') }}
         </div>
     @endif
 
     @if($class_id)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-            <table class="w-full text-center border-collapse min-w-[800px]">
+        <!-- Print Header (Only visible during print) -->
+        <div class="hidden print:block text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">ক্লাস রুটিন</h2>
+            <p class="text-gray-600 mt-1">
+                শ্রেণী: {{ collect($classes)->firstWhere('id', $class_id)->name ?? '' }} 
+                @if($section_id) | শাখা: {{ collect($sections)->firstWhere('id', $section_id)->name ?? '' }} @endif
+            </p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto print:overflow-visible print:shadow-none print:border-none">
+            <style>
+                @media print {
+                    @page { size: landscape; margin: 0.5cm; }
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    /* Make table fit into the page */
+                    table { table-layout: fixed !important; width: 100% !important; min-width: 0 !important; }
+                    th, td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal !important; }
+                    th { width: auto !important; padding: 4px !important; font-size: 12px !important; }
+                    td { padding: 2px !important; }
+                    
+                    /* Scale down the inner blocks */
+                    .min-h-\[80px\] { min-height: 50px !important; padding: 4px !important; }
+                    .text-sm { font-size: 11px !important; line-height: 1.2 !important; margin-bottom: 2px !important; }
+                    .text-xs { font-size: 10px !important; line-height: 1.2 !important; }
+                    .text-\[10px\] { font-size: 9px !important; line-height: 1.2 !important; }
+                    
+                    /* Hide unnecessary UI elements in print cells */
+                    svg { display: none !important; }
+                    .pr-5 { padding-right: 0 !important; }
+                }
+            </style>
+            <table class="w-full text-center border-collapse min-w-[800px] print:min-w-0 print:table-fixed">
                 <thead>
                     <tr>
                         <th class="border px-4 py-3 bg-gray-100 text-gray-700 w-32">দিন / পিরিয়ড</th>

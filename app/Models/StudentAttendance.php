@@ -20,6 +20,7 @@ class StudentAttendance extends Model
 
     protected $casts = [
         'date' => 'date',
+        'status' => 'integer',
     ];
 
     public function student(): BelongsTo
@@ -45,10 +46,10 @@ class StudentAttendance extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'present' => 'উপস্থিত',
-            'absent' => 'অনুপস্থিত',
-            'late' => 'বিলম্বে',
-            'excused' => 'ছুটি',
+            1 => 'উপস্থিত',
+            2 => 'অনুপস্থিত',
+            3 => 'বিলম্বে',
+            4 => 'ছুটি',
             default => 'অজানা',
         };
     }
@@ -56,10 +57,10 @@ class StudentAttendance extends Model
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
-            'present' => 'bg-green-100 text-green-800',
-            'absent' => 'bg-red-100 text-red-800',
-            'late' => 'bg-amber-100 text-amber-800',
-            'excused' => 'bg-blue-100 text-blue-800',
+            1 => 'bg-green-100 text-green-800',
+            2 => 'bg-red-100 text-red-800',
+            3 => 'bg-amber-100 text-amber-800',
+            4 => 'bg-blue-100 text-blue-800',
             default => 'bg-gray-100 text-gray-800',
         };
     }

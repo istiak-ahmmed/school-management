@@ -1,0 +1,101 @@
+<div class="space-y-6">
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">আমার হাজিরা (My Attendance)</h2>
+            <p class="text-sm text-gray-500">উপস্থিতি এবং অনুপস্থিতির রিপোর্ট</p>
+        </div>
+        <div class="flex gap-2">
+            <select wire:model.live="selectedMonth" class="rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm">
+                @foreach(range(1, 12) as $m)
+                    <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}">{{ date('F', mktime(0, 0, 0, $m, 10)) }}</option>
+                @endforeach
+            </select>
+            <select wire:model.live="selectedYear" class="rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm">
+                @foreach($years as $year)
+                    <option value="{{ $year }}">{{ $year }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+            <p class="text-xs font-medium text-gray-500 mb-1">মোট কর্মদিবস</p>
+            <h3 class="text-2xl font-bold text-gray-800">{{ $totalDays }}</h3>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-emerald-100 p-4 text-center">
+            <p class="text-xs font-medium text-emerald-600 mb-1">উপস্থিত</p>
+            <h3 class="text-2xl font-bold text-emerald-700">{{ $presentDays }}</h3>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-orange-100 p-4 text-center">
+            <p class="text-xs font-medium text-orange-600 mb-1">অর্ধদিবস</p>
+            <h3 class="text-2xl font-bold text-orange-700">{{ $halfDays }}</h3>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-red-100 p-4 text-center">
+            <p class="text-xs font-medium text-red-600 mb-1">অনুপস্থিত</p>
+            <h3 class="text-2xl font-bold text-red-700">{{ $absentDays }}</h3>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-yellow-100 p-4 text-center">
+            <p class="text-xs font-medium text-yellow-600 mb-1">বিলম্ব/ছুটি</p>
+            <h3 class="text-2xl font-bold text-yellow-700">{{ $lateDays + $leaveDays }}</h3>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center bg-emerald-50/50">
+            <p class="text-xs font-medium text-gray-500 mb-1">উপস্থিতির হার</p>
+            <h3 class="text-2xl font-bold text-emerald-600">{{ $attendancePercentage }}%</h3>
+        </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+            <h3 class="text-lg font-medium text-gray-900">
+                {{ date('F Y', strtotime($selectedYear . '-' . $selectedMonth . '-01')) }} এর হাজিরা বিবরণী
+            </h3>
+        </div>
+        
+        @if($attendances->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">তারিখ</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">বার</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">স্ট্যাটাস</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($attendances as $record)
+                            @php $date = \Carbon\Carbon::parse($record->date); @endphp
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ $date->format('d M, Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $date->format('l') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($record->status === 1)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">উপস্থিত</span>
+                                    @elseif($record->status === 2)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">অনুপস্থিত</span>
+                                    @elseif($record->status === 3)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">বিলম্বে</span>
+                                    @elseif($record->status === 4)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">ছুটি</span>
+                                    @elseif($record->status === 5)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">অর্ধদিবস (Half Day)</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="text-center py-12">
+                <p class="text-sm text-gray-500">নির্বাচিত মাসের কোনো হাজিরার রেকর্ড পাওয়া যায়নি।</p>
+            </div>
+        @endif
+    </div>
+</div>

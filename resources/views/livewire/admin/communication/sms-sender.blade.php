@@ -18,6 +18,21 @@
         </div>
     @endif
 
+    <!-- Automated Due Fees Reminder Service -->
+    <div class="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800">অটোমেটেড বকেয়া ফি রিমাইন্ডার (Automated Due Fees Reminder)</h3>
+            <p class="text-sm text-gray-500 mt-1">Enable this service to automatically send SMS and Email reminders to students who have unpaid or partially paid fees via background queue jobs.</p>
+        </div>
+        <div>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" wire:model="due_fee_reminder_active" wire:change="toggleDueFeeReminder" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                <span class="ml-3 text-sm font-medium text-gray-900">{{ $due_fee_reminder_active ? 'Enabled' : 'Disabled' }}</span>
+            </label>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Target Selection -->
         <div class="md:col-span-1 space-y-6">

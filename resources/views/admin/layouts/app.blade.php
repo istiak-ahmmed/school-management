@@ -15,6 +15,8 @@
         rel="stylesheet">
 
     <!-- Scripts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -27,7 +29,7 @@
 
         <!-- Sidebar -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-md transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 flex flex-col">
+            class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-md transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 flex flex-col print:hidden">
             <div class="h-16 flex items-center justify-between px-4 border-b">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5">
                     <div
@@ -433,7 +435,7 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col min-w-0">
             <!-- Top Navbar -->
-            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 z-10 relative">
+            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 z-10 relative print:hidden">
                 <div class="flex items-center">
                     <!-- Hamburger Menu -->
                     <button @click="sidebarOpen = true" class="text-gray-500 focus:outline-none md:hidden mr-4">
@@ -442,6 +444,7 @@
                                 d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
+
                     <!-- Header Title -->
                     <h1 class="text-xl sm:text-2xl font-semibold text-gray-800 truncate">
                         @yield('header', 'Admin Panel')
@@ -458,6 +461,41 @@
             </main>
         </div>
     </div>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <script>
+        function initPickers() {
+            flatpickr('input[type="month"]', {
+                altInput: true,
+                plugins: [
+                    new monthSelectPlugin({
+                        shorthand: true, // defaults to false
+                        dateFormat: "Y-m", // defaults to "F Y"
+                        altFormat: "Y-F", // e.g. 2026-July
+                        theme: "light" // defaults to "light"
+                    })
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    instance.element.dispatchEvent(new Event('input', { bubbles: true }));
+                    instance.element.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initPickers);
+        document.addEventListener('livewire:navigated', initPickers);
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('trigger-print', () => {
+                setTimeout(() => {
+                    window.print();
+                }, 100);
+            });
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                initPickers();
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -21,10 +21,6 @@ class RoutinePrintController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        $pdf = Pdf::loadView('pdf.exam-routine', compact('exam', 'schoolClass', 'routines'))
-            ->setPaper('a4', 'portrait')
-            ->setOption('dpi', 150);
-
-        return $pdf->stream("Exam_Routine_{$schoolClass->name}_{$exam->code}.pdf");
+        return view('pdf.exam-routine', compact('exam', 'schoolClass', 'routines'));
     }
 }

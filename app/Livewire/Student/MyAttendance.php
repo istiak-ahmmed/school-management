@@ -36,10 +36,10 @@ class MyAttendance extends Component
             ->get();
 
         $totalDays = $attendances->count();
-        $presentDays = $attendances->where('status', 'present')->count();
-        $absentDays = $attendances->where('status', 'absent')->count();
-        $lateDays = $attendances->where('status', 'late')->count();
-        $halfDays = $attendances->where('status', 'half_day')->count();
+        $presentDays = $attendances->where('status', 1)->count();
+        $absentDays = $attendances->where('status', 2)->count();
+        $lateDays = $attendances->where('status', 3)->count();
+        $excusedDays = $attendances->where('status', 4)->count();
 
         $attendancePercentage = $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0;
 
@@ -56,7 +56,7 @@ class MyAttendance extends Component
             'presentDays' => $presentDays,
             'absentDays' => $absentDays,
             'lateDays' => $lateDays,
-            'halfDays' => $halfDays,
+            'excusedDays' => $excusedDays,
             'attendancePercentage' => $attendancePercentage,
             'years' => $years
         ]);

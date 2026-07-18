@@ -8,12 +8,13 @@ use App\Models\Section;
 use App\Models\Student;
 use App\Models\StudentAttendance;
 use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
+use App\Traits\WithExporting;
 
 #[Layout('admin.layouts.app')]
 class AttendanceReport extends Component
 {
+    use WithExporting;
     public $classes = [];
     public $sections = [];
     
@@ -57,7 +58,7 @@ class AttendanceReport extends Component
         $carbonMonth = Carbon::createFromFormat('Y-m', $this->month);
         $this->daysInMonth = $carbonMonth->daysInMonth;
         
-        $this->students = Student::where('class_id', $this->selectedClass)
+        $this->students = Student::with('user')->where('class_id', $this->selectedClass)
             ->where('section_id', $this->selectedSection)
             ->where('status', 1)
             ->get();
@@ -83,8 +84,16 @@ class AttendanceReport extends Component
                     $status = $studentAtts->get($day)->status;
                     $this->reportData[$student->id][$day] = $status;
                     
-                    if (isset($this->summary[$status])) {
-                        $this->summary[$status]++;
+                    $statusStrKey = match($status) {
+                        1 => 'present',
+                        2 => 'absent',
+                        3 => 'late',
+                        4 => 'excused',
+                        default => null,
+                    };
+
+                    if ($statusStrKey && isset($this->summary[$statusStrKey])) {
+                        $this->summary[$statusStrKey]++;
                         $this->summary['total']++;
                     }
                 } else {
@@ -94,76 +103,41 @@ class AttendanceReport extends Component
         }
     }
 
-    public function downloadCsv()
+    protected function getExportHeaders(): array
     {
-        $this->generateReport();
-        
-        $className = SchoolClass::find($this->selectedClass)->name ?? '';
-        $sectionName = Section::find($this->selectedSection)->name ?? '';
-        $monthName = Carbon::createFromFormat('Y-m', $this->month)->translatedFormat('F Y');
-        
-        $filename = "attendance_report_{$className}_{$sectionName}_{$monthName}.csv";
-
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function () {
-            $file = fopen('php://output', 'w');
-            fputs($file, "\xEF\xBB\xBF");
-            
-            $headerRow = ['Roll', 'Name'];
-            for ($day = 1; $day <= $this->daysInMonth; $day++) {
-                $headerRow[] = $day;
-            }
-            fputcsv($file, $headerRow);
-
-            foreach ($this->students as $student) {
-                $row = [
-                    $student->roll_no ?? '-',
-                    $student->user->name ?? $student->name ?? '-'
-                ];
-                
-                for ($day = 1; $day <= $this->daysInMonth; $day++) {
-                    $status = $this->reportData[$student->id][$day] ?? '-';
-                    $statusStr = '-';
-                    if ($status === 'present') $statusStr = 'P';
-                    elseif ($status === 'absent') $statusStr = 'A';
-                    elseif ($status === 'late') $statusStr = 'L';
-                    elseif ($status === 'excused') $statusStr = 'E';
-                    
-                    $row[] = $statusStr;
-                }
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        $headers = ['রোল', 'নাম'];
+        for ($day = 1; $day <= $this->daysInMonth; $day++) {
+            $headers[] = (string) $day;
+        }
+        return $headers;
     }
 
-    public function exportPdf()
+    protected function getExportData(): array
     {
-        $this->generateReport();
-        
-        $className = SchoolClass::find($this->selectedClass)->name ?? '';
-        $sectionName = Section::find($this->selectedSection)->name ?? '';
-        $monthName = Carbon::createFromFormat('Y-m', $this->month)->translatedFormat('F Y');
+        if (empty($this->students)) {
+            $this->generateReport();
+        }
 
-        $pdf = Pdf::loadView('reports.attendance', [
-            'students' => $this->students,
-            'reportData' => $this->reportData,
-            'daysInMonth' => $this->daysInMonth,
-            'className' => $className,
-            'sectionName' => $sectionName,
-            'monthName' => $monthName,
-            'summary' => $this->summary,
-        ])->setPaper('a4', 'landscape');
-
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
-        }, "attendance_report_{$monthName}.pdf");
+        $data = [];
+        foreach ($this->students as $student) {
+            $row = [
+                $student->roll_no ?? '-',
+                $student->user->name ?? $student->name ?? '-'
+            ];
+            
+            for ($day = 1; $day <= $this->daysInMonth; $day++) {
+                $status = $this->reportData[$student->id][$day] ?? null;
+                $statusStr = '-';
+                if ($status === 1) $statusStr = 'P';
+                elseif ($status === 2) $statusStr = 'A';
+                elseif ($status === 3) $statusStr = 'L';
+                elseif ($status === 4) $statusStr = 'E';
+                
+                $row[] = $statusStr;
+            }
+            $data[] = $row;
+        }
+        return $data;
     }
 
     public function render()

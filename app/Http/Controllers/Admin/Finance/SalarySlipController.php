@@ -38,10 +38,6 @@ class SalarySlipController extends Controller
             }
         }
 
-        $pdf = Pdf::loadView('pdf.salary-slip', compact('payment', 'employeeName', 'employeeDesignation', 'employeeId'))
-            ->setPaper('a5', 'portrait')
-            ->setOption('dpi', 150);
-
-        return $pdf->stream("salary-slip-{$payment->voucher_no}.pdf");
+        return view('pdf.salary-slip', compact('payment', 'employeeName', 'employeeDesignation', 'employeeId'));
     }
 }

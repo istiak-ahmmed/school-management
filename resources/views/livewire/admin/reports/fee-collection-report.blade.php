@@ -142,7 +142,7 @@
                                     <div class="text-xs text-gray-500">{{ $payment->payment_no }}</div>
                                 </td>
                                 <td class="px-6 py-3">
-                                    <div class="font-medium text-gray-800">{{ optional(optional($payment->invoice)->student)->name ?? 'N/A' }}</div>
+                                    <div class="font-medium text-gray-800">{{ optional(optional(optional($payment->invoice)->student)->user)->name ?? 'N/A' }}</div>
                                     <div class="text-xs text-gray-500">{{ optional(optional($payment->invoice)->student)->admission_no ?? '' }}</div>
                                 </td>
                                 @php

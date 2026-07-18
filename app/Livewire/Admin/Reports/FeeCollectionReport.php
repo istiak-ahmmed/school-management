@@ -51,7 +51,7 @@ class FeeCollectionReport extends Component
 
     public function getPaymentsProperty()
     {
-        return Payment::with(['invoice.student.schoolClass', 'invoice.student.section', 'invoice.feeType', 'paymentMethod'])
+        return Payment::with(['invoice.student.user', 'invoice.student.schoolClass', 'invoice.student.section', 'invoice.feeType', 'paymentMethod'])
             ->where('payment_status', 'completed')
             ->when($this->date_from, function ($q) {
                 $q->whereDate('paid_at', '>=', $this->date_from);
@@ -102,15 +102,15 @@ class FeeCollectionReport extends Component
 
             $total = 0;
             foreach ($payments as $payment) {
-                $enrollment = optional(optional($payment->invoice)->student)->currentEnrollment;
-                $classInfo = $enrollment ? optional($enrollment->schoolClass)->name . ' - ' . optional($enrollment->section)->name : '-';
+                $student = optional($payment->invoice)->student;
+                $classInfo = $student ? optional($student->schoolClass)->name . ' - ' . optional($student->section)->name : '-';
                 $feeTypeName = optional(optional($payment->invoice)->feeType)->name ?? '-';
                 $methodName = optional($payment->paymentMethod)->bn_name ?? optional($payment->paymentMethod)->en_name ?? '-';
 
                 fputcsv($file, [
                     $payment->payment_date->format('Y-m-d'),
                     $payment->payment_no,
-                    optional(optional($payment->invoice)->student)->name ?? '-',
+                    optional(optional(optional($payment->invoice)->student)->user)->name ?? '-',
                     $classInfo,
                     $feeTypeName,
                     $methodName,

@@ -182,9 +182,9 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-3">
-                                            <div class="font-medium text-gray-800">{{ optional($studentRes['student'])->name ?? 'N/A' }}</div>
+                                            <div class="font-medium text-gray-800">{{ optional(optional($studentRes['student'])->user)->name ?? 'N/A' }}</div>
                                             <div class="text-xs text-gray-500">
-                                                রোল: {{ optional(optional($studentRes['student'])->currentEnrollment)->roll_no ?? '-' }}
+                                                রোল: {{ optional($studentRes['student'])->roll_no ?? '-' }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-3 text-center font-bold text-gray-700">

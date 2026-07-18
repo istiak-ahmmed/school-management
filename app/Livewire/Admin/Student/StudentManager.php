@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StudentManager extends Component
 {
-    use Sortable;
+    use Sortable, WithPagination, \App\Traits\WithExporting;
 
     use WithPagination;
 
@@ -121,10 +121,16 @@ class StudentManager extends Component
         unset($this->students);
     }
 
-    /**
-     * Export students to CSV.
-     */
-    public function exportCsv(): StreamedResponse
+    public function getExportHeaders(): array
+    {
+        return [
+            'ভর্তি নম্বর', 'নাম', 'শ্রেণী', 'শাখা',
+            'লিঙ্গ', 'জন্ম তারিখ', 'স্ট্যাটাস',
+            'অভিভাবক', 'অভিভাবক ফোন', 'ইমেইল',
+        ];
+    }
+
+    public function getExportData(): array
     {
         $students = Student::with(['user', 'schoolClass', 'section', 'guardians'])
             ->when($this->search, fn($q) => $q->where(function ($q) {
@@ -134,41 +140,27 @@ class StudentManager extends Component
             ->when($this->filterClass, fn($q) => $q->where('class_id', $this->filterClass))
             ->when($this->filterSection, fn($q) => $q->where('section_id', $this->filterSection))
             ->when($this->filterStatus !== '', fn($q) => $q->where('status', $this->filterStatus))
+            ->orderBy($this->sortField, $this->sortDirection)
             ->get();
 
-        $filename = 'students-' . now()->format('Ymd-His') . '.csv';
+        $data = [];
+        foreach ($students as $student) {
+            $guardian = $student->guardians->first();
+            $data[] = [
+                $student->admission_no,
+                $student->user?->name,
+                $student->schoolClass?->name,
+                $student->section?->name,
+                match($student->gender) {'male'=>'ছেলে','female'=>'মেয়ে','other'=>'অন্যান্য', default=>''},
+                $student->date_birth?->format('d/m/Y'),
+                $student->status_label,
+                $guardian?->name,
+                $guardian?->phone,
+                $student->user?->email,
+            ];
+        }
 
-        return response()->streamDownload(function () use ($students) {
-            $handle = fopen('php://output', 'w');
-
-            // BOM for Excel UTF-8 compatibility
-            fputs($handle, "\xEF\xBB\xBF");
-
-            // Header row
-            fputcsv($handle, [
-                'ভর্তি নম্বর', 'নাম', 'শ্রেণী', 'শাখা',
-                'লিঙ্গ', 'জন্ম তারিখ', 'স্ট্যাটাস',
-                'অভিভাবক', 'অভিভাবক ফোন', 'ইমেইল',
-            ]);
-
-            foreach ($students as $student) {
-                $guardian = $student->guardians->first();
-                fputcsv($handle, [
-                    $student->admission_no,
-                    $student->user?->name,
-                    $student->schoolClass?->name,
-                    $student->section?->name,
-                    match($student->gender) {'male'=>'ছেলে','female'=>'মেয়ে','other'=>'অন্যান্য', default=>''},
-                    $student->date_birth?->format('d/m/Y'),
-                    $student->status_label,
-                    $guardian?->name,
-                    $guardian?->phone,
-                    $student->user?->email,
-                ]);
-            }
-
-            fclose($handle);
-        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+        return $data;
     }
 
     public function render()

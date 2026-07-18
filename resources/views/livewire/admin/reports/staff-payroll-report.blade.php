@@ -28,7 +28,7 @@
             <!-- Month/Year -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">বেতনের মাস <span class="text-red-500">*</span></label>
-                <input type="month" wire:model.live="month_year" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500">
+                <input type="month" wire:model.live="month_year" value="{{ $month_year }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500">
             </div>
 
             <!-- Employee Type -->
@@ -109,17 +109,18 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @forelse($payments as $payment)
+                            @forelse($payments as $emp)
                                 @php
-                                    $isPaid = $payment->status === \App\Enums\SalaryStatus::Paid;
-                                    $employeeType = $payment->employee_type === \App\Enums\EmployeeType::Teacher ? 'Teacher' : 'Staff';
-                                    $name = optional(optional($payment->employee)->user)->name ?? optional($payment->employee)->name ?? 'Unknown';
+                                    $isPaid = $emp['status'] === \App\Enums\SalaryStatus::Paid;
+                                    $employeeType = $emp['type'] === \App\Enums\EmployeeType::Teacher ? 'Teacher' : 'Staff';
+                                    $name = $emp['name'];
+                                    $paymentRecord = $emp['payment'];
                                 @endphp
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-3">
-                                        <div class="font-medium text-gray-800">{{ $payment->voucher_no }}</div>
+                                        <div class="font-medium text-gray-800">{{ $paymentRecord ? $paymentRecord->voucher_no : '-' }}</div>
                                         <div class="text-xs text-gray-500">
-                                            {{ $isPaid && $payment->paid_at ? $payment->paid_at->format('d M, Y') : '-' }}
+                                            {{ $isPaid && $paymentRecord && $paymentRecord->paid_at ? $paymentRecord->paid_at->format('d M, Y') : '-' }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-3">
@@ -131,14 +132,19 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-3 text-right text-gray-600">
-                                        {{ number_format($payment->basic_salary, 2) }}
+                                        {{ number_format($emp['basic_salary'], 2) }}
                                     </td>
                                     <td class="px-6 py-3 text-right">
-                                        <div class="text-green-600 text-xs">+{{ number_format($payment->total_allowance, 2) }}</div>
-                                        <div class="text-red-600 text-xs">-{{ number_format($payment->total_deduction + $payment->advance_deducted, 2) }}</div>
+                                        @if($paymentRecord)
+                                            <div class="text-green-600 text-xs">+{{ number_format($paymentRecord->total_allowance, 2) }}</div>
+                                            <div class="text-red-600 text-xs">-{{ number_format($paymentRecord->total_deduction + $paymentRecord->advance_deducted, 2) }}</div>
+                                        @else
+                                            <div class="text-green-600 text-xs">+{{ number_format($emp['structure'] ? ($emp['structure']->house_rent + $emp['structure']->medical_allowance + $emp['structure']->transport_allowance + $emp['structure']->other_allowance) : 0, 2) }}</div>
+                                            <div class="text-red-600 text-xs">-{{ number_format($emp['structure'] ? ($emp['structure']->deduction_provident + $emp['structure']->deduction_tax) : 0, 2) }}</div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-3 text-right font-bold text-gray-800">
-                                        ৳ {{ number_format($payment->net_salary, 2) }}
+                                        ৳ {{ number_format($emp['net_salary'], 2) }}
                                     </td>
                                     <td class="px-6 py-3 text-center">
                                         @if($isPaid)

@@ -36,7 +36,7 @@ class SalaryPaymentManager extends Component
 
     // Payment form
     public ?float $amountToPay = null;
-    public int $paymentMethod = 0; // 0=cash
+    public string $paymentMethod = ''; // Empty by default
     public string $transactionId = '';
     public string $note = '';
     public bool $deductAdvance = false;
@@ -133,7 +133,7 @@ class SalaryPaymentManager extends Component
         if (! $this->selectedEmployee) return;
 
         $this->amountToPay     = $this->selectedEmployee['net_salary'];
-        $this->paymentMethod   = 0;
+        $this->paymentMethod   = '';
         $this->transactionId   = '';
         $this->note            = '';
         $this->deductAdvance   = false;
@@ -175,7 +175,7 @@ class SalaryPaymentManager extends Component
     {
         $this->validate([
             'amountToPay'     => 'required|numeric|min:0',
-            'paymentMethod'   => 'required|integer',
+            'paymentMethod'   => 'required|exists:payment_methods,id',
             'advanceToDeduct' => 'nullable|numeric|min:0',
         ]);
 

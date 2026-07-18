@@ -12,11 +12,14 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use App\Traits\WithExporting;
 
 #[Layout('admin.layouts.app')]
 #[Title('ক্লাস রুটিন বিল্ডার')]
 class ClassRoutineBuilder extends Component
 {
+    use WithExporting;
+
     public $class_id = '';
     public $section_id = '';
     
@@ -84,7 +87,7 @@ class ClassRoutineBuilder extends Component
     public function mount()
     {
         $this->classes = SchoolClass::all();
-        $this->subjects = Subject::all();
+        $this->subjects = collect();
         $this->teachers = Teacher::with('user')->where('status', 1)->get();
         $this->all_sections = Section::with('schoolClass')->get();
     }
@@ -94,8 +97,10 @@ class ClassRoutineBuilder extends Component
         $this->section_id = '';
         if ($this->class_id) {
             $this->sections = Section::where('class_id', $this->class_id)->get();
+            $this->subjects = Subject::where('class_id', $this->class_id)->get();
         } else {
             $this->sections = [];
+            $this->subjects = collect();
         }
         $this->calculateMaxPeriods(true);
     }
@@ -277,5 +282,76 @@ class ClassRoutineBuilder extends Component
         return view('livewire.admin.academic.class-routine-builder', [
             'routinesMatrix' => $routines
         ]);
+    }
+
+    public function getExportHeaders(): array
+    {
+        $headers = ['দিন / পিরিয়ড'];
+        $banglaNums = [1 => '১ম', 2 => '২য়', 3 => '৩য়', 4 => '৪র্থ', 5 => '৫ম', 6 => '৬ষ্ঠ', 7 => '৭ম', 8 => '৮ম', 9 => '৯ম', 10 => '১০ম'];
+        for ($i = 1; $i <= $this->max_periods; $i++) {
+            $prefix = $banglaNums[$i] ?? $i;
+            $headers[] = $prefix . ' পিরিয়ড';
+        }
+        return $headers;
+    }
+
+    public function getExportData(): array
+    {
+        $routines = [];
+        
+        if ($this->class_id) {
+            $query = ClassRoutine::with(['subject', 'teacher.user'])
+                ->where('class_id', $this->class_id);
+                
+            if ($this->section_id) {
+                $query->where('section_id', $this->section_id);
+            } else {
+                $query->whereNull('section_id');
+            }
+
+            $fetchedRoutines = $query->get();
+            foreach ($fetchedRoutines as $r) {
+                $routines[$r->day_of_week->value][$r->period_no] = $r;
+            }
+        }
+
+        $data = [];
+        foreach ($this->days as $val => $dayLabel) {
+            $row = [$dayLabel];
+            for ($period = 1; $period <= $this->max_periods; $period++) {
+                if (isset($routines[$val][$period])) {
+                    $routine = $routines[$val][$period];
+                    if ($routine->is_break) {
+                        $row[] = 'বিরতি/টিফিন (' . $routine->start_time->format('h:i') . ' - ' . $routine->end_time->format('h:i') . ')';
+                    } else {
+                        $subjectName = $routine->subject ? $routine->subject->name : 'N/A';
+                        $teacherName = $routine->teacher && $routine->teacher->user ? $routine->teacher->user->name : 'N/A';
+                        $row[] = $subjectName . "\n" . $teacherName . "\n(" . $routine->start_time->format('h:i') . ' - ' . $routine->end_time->format('h:i') . ")";
+                    }
+                } else {
+                    $row[] = '-';
+                }
+            }
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
+    public function getExportFilename(): string
+    {
+        $className = '';
+        if ($this->class_id) {
+            $class = SchoolClass::find($this->class_id);
+            $className = $class ? str_replace(' ', '_', $class->name) : '';
+        }
+        
+        $sectionName = '';
+        if ($this->section_id) {
+            $section = Section::find($this->section_id);
+            $sectionName = $section ? '_' . str_replace(' ', '_', $section->name) : '';
+        }
+
+        return 'Class_Routine_' . $className . $sectionName . '_' . now()->format('Y-m-d');
     }
 }

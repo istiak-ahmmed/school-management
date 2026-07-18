@@ -44,7 +44,7 @@
                     @endforeach
                 </select>
 
-                <input type="month" wire:model.live="monthFilter"
+                <input type="month" wire:model.live="monthFilter" value="{{ $monthFilter }}"
                     class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"/>
             </div>
         </div>
@@ -198,10 +198,12 @@
                         <div>
                             <label class="block text-xs font-medium text-gray-600 mb-1">পেমেন্ট পদ্ধতি</label>
                             <select wire:model="paymentMethod" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                <option value="">পেমেন্ট পদ্ধতি নির্বাচন করুন</option>
                                 @foreach($paymentMethods as $method)
                                     <option value="{{ $method->id }}">{{ $method->bn_name ?? $method->en_name }}</option>
                                 @endforeach
                             </select>
+                            @error('paymentMethod') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
                     </div>
 

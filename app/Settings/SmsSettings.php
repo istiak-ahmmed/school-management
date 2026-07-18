@@ -10,6 +10,7 @@ class SmsSettings extends Settings
     public string $api_token;
     public string $sender_id;
     public bool $is_active;
+    public bool $due_fee_reminder_active;
 
     public static function group(): string
     {

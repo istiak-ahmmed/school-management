@@ -1,9 +1,23 @@
 @section('header', 'শিক্ষার্থী ব্যবস্থাপনা')
 
-<div class="space-y-5">
+<div class="space-y-6 print:m-0 print:p-0">
+    <!-- Header & Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">শিক্ষার্থী তালিকা</h2>
+            <p class="text-sm text-gray-500">সকল শিক্ষার্থীর তথ্য দেখুন ও পরিচালনা করুন</p>
+        </div>
+        <a href="{{ route('admin.students.admission') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            নতুন শিক্ষার্থী যোগ করুন
+        </a>
+    </div>
 
     {{-- ── Filters & Actions ─────────────────────────────────────────────── --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 print:hidden">
         <div class="flex flex-col lg:flex-row gap-3">
             {{-- Search --}}
             <div class="flex-1 relative">
@@ -46,13 +60,7 @@
             </select>
 
             {{-- Export --}}
-            <button wire:click="exportCsv"
-                    class="px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition flex items-center gap-2 whitespace-nowrap">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                CSV ডাউনলোড
-            </button>
+            <x-export-button />
         </div>
     </div>
 
@@ -70,8 +78,15 @@
         </div>
     @endif
 
-    {{-- ── Student Table ─────────────────────────────────────────────────── --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    {{-- ── Data Table ──────────────────────────────────────────────────── --}}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden print:shadow-none print:border-none">
+        
+        <!-- Printable Header -->
+        <div class="hidden print:block text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">দারুল হিকমাহ আল-ইসলামিয়া মাদ্রাসা</h1>
+            <p class="text-lg text-gray-600 mt-1">শিক্ষার্থী তালিকা</p>
+        </div>
+
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
@@ -171,8 +186,8 @@
         </div>
 
         @if($this->students->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100">
-                {{ $this->students->links() }}
+            <div class="px-5 py-4 border-t border-gray-100 print:hidden">
+                {{ $this->students->links(data: ['scrollTo' => false]) }}
             </div>
         @endif
     </div>

@@ -6,9 +6,11 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Response;
 use Livewire\Component;
+use App\Traits\WithExporting;
 
 class ExpenseReport extends Component
 {
+    use WithExporting;
     public $date_from;
     public $date_to;
     public $category_id = '';
@@ -35,43 +37,33 @@ class ExpenseReport extends Component
             ->get();
     }
 
-    public function downloadCsv()
+    protected function getExportHeaders(): array
+    {
+        return ['তারিখ (Date)', 'ভাউচার নং (Voucher)', 'খাত (Category)', 'প্রদান করা হয়েছে (Paid To)', 'মাধ্যম (Method)', 'নোট (Note)', 'পরিমাণ (Amount)'];
+    }
+
+    protected function getExportData(): array
     {
         $expenses = $this->expenses;
-        $filename = 'expense_report_' . date('Ymd_His') . '.csv';
+        $data = [];
+        $total = 0;
 
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function () use ($expenses) {
-            $file = fopen('php://output', 'w');
-            
-            // Add UTF-8 BOM for proper Excel Bengali rendering
-            fputs($file, "\xEF\xBB\xBF");
-            
-            fputcsv($file, ['Date', 'Voucher No', 'Category', 'Paid To', 'Method', 'Note', 'Amount']);
-
-            $total = 0;
-            foreach ($expenses as $expense) {
-                $method = optional($expense->paymentMethod)->bn_name ?? optional($expense->paymentMethod)->en_name ?? 'Unknown';
-                fputcsv($file, [
-                    $expense->expense_date->format('Y-m-d'),
-                    $expense->voucher_no,
-                    $expense->category->name ?? '-',
-                    $expense->paid_to,
-                    $method,
-                    $expense->note,
-                    $expense->amount
-                ]);
-                $total += $expense->amount;
-            }
-            fputcsv($file, ['', '', '', '', '', 'Total:', $total]);
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        foreach ($expenses as $expense) {
+            $method = optional($expense->paymentMethod)->bn_name ?? optional($expense->paymentMethod)->en_name ?? 'Unknown';
+            $data[] = [
+                $expense->expense_date->format('Y-m-d'),
+                $expense->voucher_no,
+                $expense->category->name ?? '-',
+                $expense->paid_to,
+                $method,
+                $expense->note,
+                $expense->amount
+            ];
+            $total += $expense->amount;
+        }
+        
+        $data[] = ['', '', '', '', '', 'মোট (Total):', $total];
+        return $data;
     }
 
     public function render()

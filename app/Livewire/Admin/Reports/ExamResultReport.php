@@ -47,10 +47,10 @@ class ExamResultReport extends Component
         }
 
         // Fetch marks with relationships
-        $marksQuery = Mark::with(['student.schoolClass', 'student.section', 'examRoutine.subject'])
-            ->whereHas('examRoutine', function ($q) {
-                $q->where('exam_id', $this->exam_id)
-                  ->where('class_id', $this->class_id);
+        $marksQuery = Mark::with(['student.user', 'student.schoolClass', 'student.section', 'subject'])
+            ->where('exam_id', $this->exam_id)
+            ->whereHas('student', function ($q) {
+                $q->where('class_id', $this->class_id);
                 
                 if ($this->section_id) {
                     $q->where('section_id', $this->section_id);
@@ -68,8 +68,9 @@ class ExamResultReport extends Component
 
         foreach ($marks as $mark) {
             $studentId = $mark->student_id;
-            $subjectId = $mark->examRoutine->subject_id;
-            $subjectName = $mark->examRoutine->subject->name ?? 'Unknown';
+            $subjectId = $mark->subject_id;
+            $subjectName = $mark->subject->name ?? 'Unknown';
+            $isFail = $mark->grade === 'F' || $mark->grade_point == 0 || $mark->is_absent;
 
             // Student Grouping
             if (!isset($studentResults[$studentId])) {
@@ -87,7 +88,8 @@ class ExamResultReport extends Component
             $studentResults[$studentId]['total_marks'] += $mark->marks_obtained;
             $studentResults[$studentId]['total_gpa'] += $mark->grade_point;
             $studentResults[$studentId]['subject_count']++;
-            if ($mark->status === 'fail') {
+            
+            if ($isFail) {
                 $studentResults[$studentId]['is_fail'] = true;
             }
 
@@ -102,7 +104,8 @@ class ExamResultReport extends Component
             }
             $subjectAverages[$subjectName]['total_marks'] += $mark->marks_obtained;
             $subjectAverages[$subjectName]['count']++;
-            if ($mark->status === 'pass') {
+            
+            if (!$isFail) {
                 $subjectAverages[$subjectName]['pass_count']++;
             } else {
                 $subjectAverages[$subjectName]['fail_count']++;
@@ -184,11 +187,10 @@ class ExamResultReport extends Component
 
             $pos = 1;
             foreach ($data['students'] as $student) {
-                $enrollment = optional($student['student'])->currentEnrollment;
                 fputcsv($file, [
                     $pos++,
-                    optional($student['student'])->name ?? '-',
-                    $enrollment ? $enrollment->roll_no : '-',
+                    optional(optional($student['student'])->user)->name ?? '-',
+                    optional($student['student'])->roll_no ?? '-',
                     $student['total_marks'],
                     $student['cgpa'],
                     $student['final_grade'],

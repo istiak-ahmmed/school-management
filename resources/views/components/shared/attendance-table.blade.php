@@ -30,20 +30,19 @@
                     <td class="py-3 px-6">
                         <div class="flex justify-center gap-2" x-data>
                             @foreach([
-                                'present' => ['bg-emerald-100 text-emerald-700 border-emerald-300', 'উপস্থিত'],
-                                'absent' => ['bg-red-100 text-red-700 border-red-300', 'অনুপস্থিত'],
-                                'late' => ['bg-amber-100 text-amber-700 border-amber-300', 'বিলম্বে'],
-                                'excused' => ['bg-blue-100 text-blue-700 border-blue-300', 'ছুটি']
-                            ] as $statusKey => [$colors, $label])
+                                1 => ['peer-checked:bg-emerald-100 peer-checked:text-emerald-700 peer-checked:border-emerald-300', 'উপস্থিত'],
+                                2 => ['peer-checked:bg-red-100 peer-checked:text-red-700 peer-checked:border-red-300', 'অনুপস্থিত'],
+                                3 => ['peer-checked:bg-amber-100 peer-checked:text-amber-700 peer-checked:border-amber-300', 'বিলম্বে'],
+                                4 => ['peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:border-blue-300', 'ছুটি']
+                            ] as $statusKey => [$peerClasses, $label])
                                 <label class="cursor-pointer">
                                     <input type="radio" 
                                         wire:model="attendanceData.{{ $student->id }}" 
                                         value="{{ $statusKey }}"
                                         class="sr-only peer">
                                     <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border transition 
-                                        peer-checked:{{ $colors }} 
                                         border-gray-200 text-gray-500 hover:border-gray-300
-                                        {{ ($attendanceData[$student->id] ?? '') === $statusKey ? $colors . ' border' : '' }}">
+                                        {{ $peerClasses }}">
                                         {{ $label }}
                                     </span>
                                 </label>

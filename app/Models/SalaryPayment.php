@@ -40,7 +40,7 @@ class SalaryPayment extends Model
 
     public function employee()
     {
-        if ($this->employee_type === 0) {
+        if ($this->employee_type === EmployeeType::Teacher || $this->employee_type === 0 || $this->employee_type === '0') {
             return $this->belongsTo(Teacher::class, 'employee_id');
         }
         return $this->belongsTo(Staff::class, 'employee_id');

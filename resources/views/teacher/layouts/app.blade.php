@@ -16,6 +16,10 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
 </head>
 
 <body class="font-sans antialiased bg-gray-50" x-data="{ sidebarOpen: false }">
@@ -96,14 +100,24 @@
                     $isFormTeacher = \App\Models\Section::where('teacher_id', auth()->id())->exists();
                 @endphp
                 @if($isFormTeacher)
-                    <a href="{{ route('teacher.attendance') }}"
-                        class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:text-violet-700 rounded-lg transition {{ request()->routeIs('teacher.attendance') ? 'bg-violet-50 text-violet-700' : '' }}">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                        </svg>
-                        <span>হাজিরা গ্রহণ (Attendance)</span>
-                        <span class="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-violet-100 text-violet-700 rounded">FORM</span>
-                    </a>
+                    <div x-data="{ reportMenuOpen: {{ request()->routeIs('teacher.attendance*') ? 'true' : 'false' }} }" class="space-y-1">
+                        <button @click="reportMenuOpen = !reportMenuOpen" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:text-violet-700 rounded-lg transition {{ request()->routeIs('teacher.attendance*') ? 'bg-violet-50 text-violet-700' : '' }}">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            <span>হাজিরা (Attendance)</span>
+                            <span class="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-violet-100 text-violet-700 rounded">FORM</span>
+                            <svg :class="{'rotate-180': reportMenuOpen}" class="w-4 h-4 ml-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="reportMenuOpen" x-collapse class="pl-11 pr-4 space-y-1">
+                            <a href="{{ route('teacher.attendance') }}" class="block px-3 py-2 text-sm font-medium text-gray-600 hover:text-violet-700 rounded-md transition {{ request()->routeIs('teacher.attendance') ? 'bg-violet-100/50 text-violet-700' : '' }}">
+                                হাজিরা গ্রহণ (Take)
+                            </a>
+                            <a href="{{ route('teacher.attendance-report') }}" class="block px-3 py-2 text-sm font-medium text-gray-600 hover:text-violet-700 rounded-md transition {{ request()->routeIs('teacher.attendance-report') ? 'bg-violet-100/50 text-violet-700' : '' }}">
+                                হাজিরা রিপোর্ট (Report)
+                            </a>
+                        </div>
+                    </div>
                 @endif
 
                 <a href="{{ route('teacher.marks-entry') }}"
@@ -136,6 +150,22 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <span>বেতন স্লিপ (Salary)</span>
+                </a>
+
+                <a href="{{ route('teacher.my-attendance') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:text-violet-700 rounded-lg transition {{ request()->routeIs('teacher.my-attendance') ? 'bg-violet-50 text-violet-700' : '' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>আমার হাজিরা (My Attendance)</span>
+                </a>
+
+                <a href="{{ route('teacher.apply-leave') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:text-violet-700 rounded-lg transition {{ request()->routeIs('teacher.apply-leave') ? 'bg-violet-50 text-violet-700' : '' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>ছুটির আবেদন (Apply Leave)</span>
                 </a>
 
                 <a href="{{ route('teacher.notices') }}"
@@ -187,6 +217,36 @@
             </main>
         </div>
     </div>
-</body>
 
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <script>
+        function initPickers() {
+            flatpickr('input[type="month"]', {
+                altInput: true,
+                plugins: [
+                    new monthSelectPlugin({
+                        shorthand: true, // defaults to false
+                        dateFormat: "Y-m", // defaults to "F Y"
+                        altFormat: "Y-F", // e.g. 2026-July
+                        theme: "light" // defaults to "light"
+                    })
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    instance.element.dispatchEvent(new Event('input', { bubbles: true }));
+                    instance.element.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initPickers);
+        document.addEventListener('livewire:navigated', initPickers);
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                initPickers();
+            });
+        });
+    </script>
+</body>
 </html>

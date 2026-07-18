@@ -17,6 +17,8 @@ class ExamRoutineBuilder extends Component
 {
     public $exam_id = '';
     public $class_id = '';
+    
+    public $editing_routine_id = null;
 
     // Form inputs for a new routine item
     public $subject_id = '';
@@ -50,7 +52,7 @@ class ExamRoutineBuilder extends Component
     {
         $this->exams = Exam::orderBy('id', 'desc')->get();
         $this->classes = SchoolClass::all();
-        $this->subjects = Subject::all();
+        $this->subjects = collect();
         $this->teachers = Teacher::with('user')->where('status', 1)->get();
     }
 
@@ -61,7 +63,23 @@ class ExamRoutineBuilder extends Component
 
     public function updatedClassId()
     {
+        if ($this->class_id) {
+            $this->subjects = Subject::where('class_id', $this->class_id)->get();
+        } else {
+            $this->subjects = collect();
+        }
         $this->loadRoutines();
+    }
+
+    public function updatedSubjectId($subjectId)
+    {
+        if ($subjectId) {
+            $subject = Subject::find($subjectId);
+            if ($subject) {
+                $this->full_marks = $subject->full_marks;
+                $this->pass_marks = $subject->pass_marks;
+            }
+        }
     }
 
     public function loadRoutines()
@@ -87,39 +105,78 @@ class ExamRoutineBuilder extends Component
             return;
         }
 
-        // Check if subject already exists in this exam and class
-        $exists = ExamRoutine::where('exam_id', $this->exam_id)
+        // Check if subject already exists in this exam and class, ignoring current if editing
+        $query = ExamRoutine::where('exam_id', $this->exam_id)
             ->where('class_id', $this->class_id)
-            ->where('subject_id', $this->subject_id)
-            ->exists();
+            ->where('subject_id', $this->subject_id);
+            
+        if ($this->editing_routine_id) {
+            $query->where('id', '!=', $this->editing_routine_id);
+        }
 
-        if ($exists) {
+        if ($query->exists()) {
             $this->addError('subject_id', 'এই বিষয়ের রুটিন ইতিমধ্যে যোগ করা হয়েছে।');
             return;
         }
 
-        $routine = ExamRoutine::create([
-            'exam_id' => $this->exam_id,
-            'class_id' => $this->class_id,
-            'subject_id' => $this->subject_id,
-            'exam_date' => $this->exam_date,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
-            'room' => $this->room,
-            'full_marks' => $this->full_marks,
-            'pass_marks' => $this->pass_marks,
-        ]);
+        if ($this->editing_routine_id) {
+            $routine = ExamRoutine::findOrFail($this->editing_routine_id);
+            $routine->update([
+                'subject_id' => $this->subject_id,
+                'exam_date' => $this->exam_date,
+                'start_time' => $this->start_time,
+                'end_time' => $this->end_time,
+                'room' => $this->room,
+                'full_marks' => $this->full_marks,
+                'pass_marks' => $this->pass_marks,
+            ]);
+            $msg = 'রুটিন সফলভাবে আপডেট করা হয়েছে!';
+        } else {
+            $routine = ExamRoutine::create([
+                'exam_id' => $this->exam_id,
+                'class_id' => $this->class_id,
+                'subject_id' => $this->subject_id,
+                'exam_date' => $this->exam_date,
+                'start_time' => $this->start_time,
+                'end_time' => $this->end_time,
+                'room' => $this->room,
+                'full_marks' => $this->full_marks,
+                'pass_marks' => $this->pass_marks,
+            ]);
+            $msg = 'রুটিন সফলভাবে যোগ করা হয়েছে!';
+        }
 
         if (!empty($this->selected_teachers)) {
             $routine->teachers()->sync($this->selected_teachers);
         }
 
-        $this->reset(['subject_id', 'exam_date', 'start_time', 'end_time', 'room', 'selected_teachers']);
+        $this->reset(['subject_id', 'exam_date', 'start_time', 'end_time', 'room', 'selected_teachers', 'editing_routine_id']);
         $this->full_marks = 100;
         $this->pass_marks = 33;
         
         $this->loadRoutines();
-        session()->flash('success', 'রুটিন সফলভাবে যোগ করা হয়েছে!');
+        session()->flash('success', $msg);
+    }
+
+    public function editRoutine($id)
+    {
+        $routine = ExamRoutine::findOrFail($id);
+        $this->editing_routine_id = $routine->id;
+        $this->subject_id = $routine->subject_id;
+        $this->exam_date = \Carbon\Carbon::parse($routine->exam_date)->format('Y-m-d');
+        $this->start_time = \Carbon\Carbon::parse($routine->start_time)->format('H:i');
+        $this->end_time = \Carbon\Carbon::parse($routine->end_time)->format('H:i');
+        $this->room = $routine->room;
+        $this->full_marks = $routine->full_marks;
+        $this->pass_marks = $routine->pass_marks;
+        $this->selected_teachers = $routine->teachers->pluck('id')->toArray();
+    }
+
+    public function cancelEdit()
+    {
+        $this->reset(['subject_id', 'exam_date', 'start_time', 'end_time', 'room', 'selected_teachers', 'editing_routine_id']);
+        $this->full_marks = 100;
+        $this->pass_marks = 33;
     }
 
     public function deleteRoutine($id)

@@ -21,6 +21,22 @@ class SmsSender extends Component
     public $message = '';
     
     public $custom_numbers = ''; // comma separated
+    
+    public $due_fee_reminder_active = false;
+
+    public function mount(SmsSettings $settings)
+    {
+        $this->due_fee_reminder_active = $settings->due_fee_reminder_active;
+    }
+
+    public function toggleDueFeeReminder(SmsSettings $settings)
+    {
+        $settings->due_fee_reminder_active = $this->due_fee_reminder_active;
+        $settings->save();
+        
+        $status = $this->due_fee_reminder_active ? 'enabled' : 'disabled';
+        session()->flash('message', "Automated due fee reminder service has been {$status}.");
+    }
 
     public function getClassesProperty()
     {

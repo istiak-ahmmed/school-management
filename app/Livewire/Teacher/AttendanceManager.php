@@ -38,23 +38,8 @@ class AttendanceManager extends Component
             return;
         }
 
-        // Auto-select the first section
+        // Auto-select the first section but wait for them to click search
         $this->selectedSectionId = $this->formSections->first()->id;
-        $this->loadStudents();
-    }
-
-    public function updatedSelectedSectionId()
-    {
-        $this->isLoaded = false;
-        $this->students = [];
-        $this->attendanceData = [];
-        $this->loadStudents();
-    }
-
-    public function updatedDate()
-    {
-        $this->isLoaded = false;
-        $this->loadStudents();
     }
 
     public function loadStudents()
@@ -77,18 +62,18 @@ class AttendanceManager extends Component
 
         $this->attendanceData = [];
         foreach ($this->students as $student) {
-            $this->attendanceData[$student->id] = $existing->has($student->id)
+            $this->attendanceData[$student->id] = (string) ($existing->has($student->id)
                 ? $existing->get($student->id)->status
-                : 'present';
+                : 1);
         }
 
         $this->isLoaded = true;
     }
 
-    public function markAll(string $status)
+    public function markAll($status)
     {
         foreach ($this->students as $student) {
-            $this->attendanceData[$student->id] = $status;
+            $this->attendanceData[$student->id] = (string) $status;
         }
     }
 
@@ -109,7 +94,7 @@ class AttendanceManager extends Component
         $section = Section::find($this->selectedSectionId);
 
         foreach ($this->students as $student) {
-            $status = $this->attendanceData[$student->id] ?? 'present';
+            $status = $this->attendanceData[$student->id] ?? 1;
 
             StudentAttendance::updateOrCreate(
                 [

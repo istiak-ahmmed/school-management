@@ -49,12 +49,18 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Add Routine Form -->
             <div class="lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-gray-100 self-start sticky top-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">নতুন রুটিন যোগ করুন</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+                    @if($editing_routine_id)
+                        রুটিন আপডেট করুন
+                    @else
+                        নতুন রুটিন যোগ করুন
+                    @endif
+                </h3>
                 
                 <form wire:submit.prevent="addRoutine" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">বিষয় <span class="text-red-500">*</span></label>
-                        <select wire:model="subject_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        <select wire:model.live="subject_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                             <option value="">নির্বাচন করুন</option>
                             @foreach($subjects as $subject)
                                 <option value="{{ $subject->id }}">{{ $subject->name }}</option>
@@ -102,7 +108,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <span>শিক্ষক / গার্ড (একাধিক)</span>
+                            <span>শিক্ষক / ইনভিজিলেটর (একাধিক)</span>
                         </label>
                         <div class="w-full border border-gray-300 rounded-lg px-3 py-2 h-40 overflow-y-auto space-y-1">
                             @foreach($teachers as $teacher)
@@ -114,11 +120,22 @@
                         </div>
                         @error('selected_teachers') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
-
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition flex justify-center items-center gap-2 mt-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        রুটিন যোগ করুন
-                    </button>
+                    <div class="flex gap-2 pt-2">
+                        <button type="submit" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-medium flex items-center justify-center gap-2">
+                            @if($editing_routine_id)
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                আপডেট করুন
+                            @else
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                রুটিন যোগ করুন
+                            @endif
+                        </button>
+                        @if($editing_routine_id)
+                            <button type="button" wire:click="cancelEdit" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition font-medium">
+                                বাতিল
+                            </button>
+                        @endif
+                    </div>
                 </form>
             </div>
 
@@ -132,7 +149,7 @@
                                 <th class="px-5 py-3 font-medium">বিষয়</th>
                                 <th class="px-5 py-3 font-medium">রুম</th>
                                 <th class="px-5 py-3 font-medium">মান (পূর্ণ/পাস)</th>
-                                <th class="px-5 py-3 font-medium">গার্ড</th>
+                                <th class="px-5 py-3 font-medium">ইনভিজিলেটর</th>
                                 <th class="px-5 py-3 font-medium text-right">অ্যাকশন</th>
                             </tr>
                         </thead>
@@ -158,9 +175,14 @@
                                         @endforeach
                                     </td>
                                     <td class="px-5 py-3 text-right">
-                                        <button wire:click="deleteRoutine({{ $routine->id }})" wire:confirm="আপনি কি নিশ্চিত?" class="text-red-500 hover:bg-red-50 p-1.5 rounded transition">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <button wire:click="editRoutine({{ $routine->id }})" class="text-indigo-500 hover:bg-indigo-50 p-1.5 rounded transition">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            </button>
+                                            <button wire:click="deleteRoutine({{ $routine->id }})" wire:confirm="আপনি কি নিশ্চিত?" class="text-red-500 hover:bg-red-50 p-1.5 rounded transition">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
