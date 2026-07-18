@@ -37,7 +37,6 @@
                 
                 <h3 class="text-lg font-bold text-gray-900 group-hover:theme-text transition mb-1">{{ $teacher->user->name }}</h3>
                 <p class="text-sm text-emerald-600 font-medium mb-2">{{ $teacher->designation ?? 'শিক্ষক' }}</p>
-                <p class="text-xs text-gray-500">{{ $teacher->qualification ?? '' }}</p>
             </div>
         @empty
             <div class="col-span-full text-center py-12 bg-white rounded-2xl shadow-sm border border-dashed border-gray-200">
