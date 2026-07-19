@@ -6,8 +6,8 @@ on:
       - main # Change this to your default branch
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  build:
+    name: 🛠️ Build
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
@@ -16,7 +16,7 @@ jobs:
     - name: ⚙️ Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.3' # Change to match your server's PHP version
+        php-version: '8.3'
         
     - name: 📦 Install Composer Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader --no-dev
@@ -30,7 +30,30 @@ jobs:
       run: |
         npm install
         npm run build
-        
+
+    - name: 🗂️ Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files
+        path: |
+          public/build/
+          vendor/
+        retention-days: 1
+
+  deploy:
+    name: 🚀 Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: 📥 Download Build Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files
+        path: .
+
     - name: 📂 Sync files to cPanel via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
