@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadMigrationsFrom(database_path('migrations/examination'));
         $this->loadMigrationsFrom(database_path('migrations/finance'));
 
         // Implicitly grant "Super Admin" role all permissions

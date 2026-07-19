@@ -116,6 +116,10 @@ return [
 
     ],
 
+    'options' => [
+        PDO::MYSQL_ATTR_SSL_CA => env('DB_SSL_CA') ? base_path(env('DB_SSL_CA')) : null,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Migration Repository Table
