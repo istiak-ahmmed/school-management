@@ -1,5 +1,10 @@
 <?php
 
+// Azure Nginx রুট ফোল্ডার স্বয়ংক্রিয়ভাবে public-এ পরিবর্তন করার স্ক্রিপ্ট
+if (file_exists('/etc/nginx/sites-available/default') && ! str_contains(file_get_contents('/etc/nginx/sites-available/default'), 'wwwroot/public')) {
+    shell_exec("sed -i 's|root /home/site/wwwroot;|root /home/site/wwwroot/public;|g' /etc/nginx/sites-available/default && service nginx reload");
+}
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
