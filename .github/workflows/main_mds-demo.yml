@@ -68,8 +68,5 @@ jobs:
           slot-name: 'Production'
           package: .
 
-      - name: Clear Configuration Cache for Production
-        run: |
-          php artisan o:c
 
           
