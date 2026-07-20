@@ -1,0 +1,14 @@
+# ---
+# deployment:
+#   tasks:
+#     - export DEPLOYPATH=/home/cookoori/mds.cookooria.com/
+#     - /bin/cp -R * $DEPLOYPATH
+#     - cd $DEPLOYPATH
+#     - /usr/local/bin/composer install --no-dev --optimize-autoloader
+#     - export NVM_DIR="$HOME/.nvm"
+#     - [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#     - npm install
+#     - npm run build
+#     - /usr/local/bin/php artisan optimize:clear
+#     - /usr/local/bin/php artisan optimize
+#     - /usr/local/bin/php artisan migrate --force
