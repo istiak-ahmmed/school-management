@@ -53,6 +53,9 @@ jobs:
         name: build-files
         path: .
 
+    - name: 🛠️ Un-ignore public/build
+      run: sed -i '\|/public/build|d' .gitignore || true
+
     - name: 📂 Sync files to cPanel via FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
